@@ -12,11 +12,49 @@ class ModifiedFASTAViewer:
     def __init__(self, master):
         self.master = master
         self.master.title("FASTA Viewer")
-
+        
         # Create a button to upload the FASTA file
         self.upload_button = Button(self.master, text="Upload FASTA", command=self.upload_file)
         self.upload_button.pack(pady=10)
-
+        
+        # Create checkboxes for settings
+        self.spacer = tk.Checkbutton(self.master, text="Spacer", onvalue=1, offvalue=0)
+        self.spacer.pack()
+        
+        self.homopolymer = tk.Checkbutton(self.master, text="Homopolymer", onvalue=1, offvalue=0)
+        self.homopolymer.pack()
+        
+        self.cpg_island = tk.Checkbutton(self.master, text="CpG Island", onvalue=1, offvalue=0)
+        self.cpg_island.pack()
+        
+        self.motif_search = tk.Checkbutton(self.master, text="Motif Search", onvalue=1, offvalue=0)
+        self.motif_search.pack()
+        
+        self.codon_profile = tk.Checkbutton(self.master, text="Codon Profile", onvalue=1, offvalue=0)
+        self.codon_profile.pack()
+        
+        self.printSeqFragment = tk.Checkbutton(self.master, text="Print Sequence Fragment", onvalue=1, offvalue=0)
+        self.printSeqFragment.pack()
+        
+        self.printTargets = tk.Checkbutton(self.master, text="Print Targets", onvalue=1, offvalue=0)
+        self.printTargets.pack()
+        
+        self.alignment = tk.Checkbutton(self.master, text="Aligment", onvalue=1, offvalue=0)
+        self.alignment.pack()
+        
+        self.process_aligned_seq = tk.Checkbutton(self.master, text="Process Aligned Sequence", onvalue=1, offvalue=0)
+        self.process_aligned_seq.pack()
+        
+        self.positional_matrix = tk.Checkbutton(self.master, text="Positional Matrix", onvalue=1, offvalue=0)
+        self.positional_matrix.pack()
+        
+        self.show_positional_matrix = tk.Checkbutton(self.master, text="Show Positional Matrix", onvalue=1, offvalue=0)
+        self.show_positional_matrix.pack()
+        
+        # Update based on the checked boxes
+        self.update_button = Button(self.master, text="Update")
+        self.update_button.pack(pady=10)
+        
         # Label to display the total number of sequences
         self.sequence_count_label = Label(self.master, text="")
         self.sequence_count_label.pack(pady=10)
@@ -36,6 +74,10 @@ class ModifiedFASTAViewer:
         # Text box to display the sequence
         self.sequence_display = Text(self.master, height=25, width=200)
         self.sequence_display.pack(pady=10, padx=20)
+        
+        # Table view to display sequence info
+        self.sequence_table = Text(self.master, height=25, width=200)
+        self.sequence_table.pack(pady=10, padx=20)
 
         # Clear button to reset selections and clear the sequence display
         self.clear_button = Button(self.master, text="Clear", command=self.clear_widget)
