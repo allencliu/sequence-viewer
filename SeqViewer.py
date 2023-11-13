@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, Text, Listbox, Scrollbar, Toplevel, Label, Button
 from collections import OrderedDict
 import os
+from tkinter.ttk import Treeview
 
 
 def is_empty_file(filepath):
@@ -72,11 +73,24 @@ class ModifiedFASTAViewer:
         self.listbox.bind("<<ListboxSelect>>", self.show_sequence)
 
         # Text box to display the sequence
-        self.sequence_display = Text(self.master, height=25, width=200)
+        self.sequence_display = Text(self.master, height=10, width=200)
         self.sequence_display.pack(pady=10, padx=20)
         
         # Table view to display sequence info
-        self.sequence_table = Text(self.master, height=25, width=200)
+                # Create a Treeview for the table view
+        self.tree = Treeview(self.master, columns=("Name", "Description", "Length", "A", "T", "G", "C", "GC Content"))
+        self.tree.heading("#0", text="Sequence Headers")
+        self.tree.heading("Name", text="Name")
+        self.tree.heading("Description", text="Description")
+        self.tree.heading("Length", text="Length")
+        self.tree.heading("A", text="A Count")
+        self.tree.heading("T", text="T Count")
+        self.tree.heading("G", text="G Count")
+        self.tree.heading("C", text="C Count")
+        self.tree.heading("GC Content", text="GC Content")
+        
+        self.tree.pack(pady=10, padx=20, fill=tk.BOTH, expand=True)
+        self.sequence_table = Text(self.master, height=10, width=200)
         self.sequence_table.pack(pady=10, padx=20)
 
         # Clear button to reset selections and clear the sequence display
@@ -127,6 +141,9 @@ class ModifiedFASTAViewer:
             self.sequences[header] = sequence
             self.listbox.insert(tk.END, header)
 
+            # Update table
+            self.update_treeview()
+            
             # Update the sequence count label
 
             loading_window.destroy()
@@ -136,6 +153,24 @@ class ModifiedFASTAViewer:
             tk.messagebox.showerror("Error", "The selected FASTA file contains no sequences!")
             return
         self.sequence_count_label.config(text=f"Total Sequences: {len(self.sequences)}")
+        
+
+        
+    def update_treeview(self):
+        # Clear previous items in the Treeview
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        # Populate the Treeview with sequence information
+        for header, sequence in self.sequences.items():
+            length = len(sequence)
+            a_count = sequence.count('A')
+            t_count = sequence.count('T')
+            g_count = sequence.count('G')
+            c_count = sequence.count('C')
+            gc_content = (g_count + c_count) / length * 100 if length > 0 else 0
+
+            self.tree.insert("", "end", values=(header, "", length, a_count, t_count, g_count, c_count, f"{gc_content:.2f}%"))
 
 
 # Modifying the ModifiedFASTAViewer class to display long sequences in a new window
@@ -175,6 +210,48 @@ class UpdatedFASTAViewer(ModifiedFASTAViewer):
     def clear_widget(self):
         self.listbox.selection_clear(0, tk.END)
         self.sequence_display.delete(1.0, tk.END)
+        
+    def read_fasta(filename):
+        """Reads a FASTA file and extracts sequence information.
+
+        Args:
+            filename (str): The path/name of the FASTA file to be read.
+
+        Returns:
+            tuple: A tuple containing three lists: seq_name, seq_desc, and seq_base.
+                - seq_name: List of sequence names.
+                - seq_desc: List of sequence descriptions.
+                - seq_base: List of sequence bases.
+        """
+        # Read the entire contents of the FASTA file into a string.
+        fasta_file = open(filename, "r").read()
+
+        # Split the file into a list of sequences using '>' as the delimiter.
+        name_list = fasta_file.split(">")
+
+        # Initialize empty lists to store sequence names, descriptions, and bases.
+        seq_name = []
+        seq_desc = []
+        seq_base = []
+
+        # Iterate through each sequence in the list (starting from index 1 to skip the empty first element).
+        for seq in name_list[1:]:
+            # Extract the sequence name from the first line.
+            name = seq.split("\n")[0][:].split(" ")[0]
+
+            # Extract the sequence description from the first line, excluding the name.
+            description = " ".join(seq.split("\n")[0][1:].split(" ")[1:])
+
+            # Extract the sequence bases by joining all lines after the first one.
+            sequence = "".join(seq.split("\n")[1:])
+
+            # Append the extracted information to their respective lists.
+            seq_name.append(name)
+            seq_desc.append(description)
+            seq_base.append(sequence)
+
+        # Return a tuple containing the three lists.
+        return (seq_name, seq_desc, seq_base)
 
 
 # Display GUI
