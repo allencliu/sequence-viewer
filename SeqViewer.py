@@ -77,17 +77,26 @@ class ModifiedFASTAViewer:
         self.sequence_display.pack(pady=10, padx=20)
         
         # Table view to display sequence info
-                # Create a Treeview for the table view
+        # Create a Treeview for the table view
         self.tree = Treeview(self.master, columns=("Name", "Description", "Length", "A", "T", "G", "C", "GC Content"))
+        self.tree["show"] = "headings"
         # self.tree.heading("#0", text="Sequence Headers")
         self.tree.heading("Name", text="Name")
+        self.tree.column("Name", width=100)
         self.tree.heading("Description", text="Description")
+        self.tree.column("Description", width=100)
         self.tree.heading("Length", text="Length")
+        self.tree.column("Length")
         self.tree.heading("A", text="A Count")
+        self.tree.column("A")
         self.tree.heading("T", text="T Count")
+        self.tree.column("T")
         self.tree.heading("G", text="G Count")
+        self.tree.column("G")
         self.tree.heading("C", text="C Count")
+        self.tree.column("C")
         self.tree.heading("GC Content", text="GC Content")
+        self.tree.column("GC Content")
         
         self.tree.pack(pady=10, padx=20, fill=tk.BOTH, expand=True)
         self.sequence_table = Text(self.master, height=10, width=200)
