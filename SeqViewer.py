@@ -79,7 +79,7 @@ class ModifiedFASTAViewer:
         # Table view to display sequence info
                 # Create a Treeview for the table view
         self.tree = Treeview(self.master, columns=("Name", "Description", "Length", "A", "T", "G", "C", "GC Content"))
-        self.tree.heading("#0", text="Sequence Headers")
+        # self.tree.heading("#0", text="Sequence Headers")
         self.tree.heading("Name", text="Name")
         self.tree.heading("Description", text="Description")
         self.tree.heading("Length", text="Length")
@@ -163,6 +163,10 @@ class ModifiedFASTAViewer:
 
         # Populate the Treeview with sequence information
         for header, sequence in self.sequences.items():
+            header = header[1:]
+            header = header.split(" ", 1)
+            name = header[0]
+            description = header[1]
             length = len(sequence)
             a_count = sequence.count('A')
             t_count = sequence.count('T')
@@ -170,7 +174,7 @@ class ModifiedFASTAViewer:
             c_count = sequence.count('C')
             gc_content = (g_count + c_count) / length * 100 if length > 0 else 0
 
-            self.tree.insert("", "end", values=(header, "", length, a_count, t_count, g_count, c_count, f"{gc_content:.2f}%"))
+            self.tree.insert("", "end", values=(name, description, length, a_count, t_count, g_count, c_count, f"{gc_content:.2f}%"))
 
 
 # Modifying the ModifiedFASTAViewer class to display long sequences in a new window
