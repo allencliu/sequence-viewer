@@ -1,3 +1,4 @@
+import re
 import tkinter as tk
 from tkinter import filedialog, Text, Listbox, Scrollbar, Toplevel, Label, Button
 from collections import OrderedDict
@@ -7,6 +8,211 @@ from tkinter.ttk import Treeview
 
 def is_empty_file(filepath):
     return os.path.getsize(filepath) == 0
+
+def printWithRuler(sequence, spacer):
+    '''
+    Print the data from the FASTA file with a spacer.
+    :param sequence: The sequence we are printing here
+    :param spacer: The spacer between segments of our sequence
+    '''
+    # Print the first line with spacers
+    firstLine = "     "
+    firstLineCounter = 1
+    for i in range(0, 5):
+        firstLine += "         " + str(firstLineCounter) + spacer
+        firstLineCounter += 1
+    print(firstLine)
+    # Print the second line with spacers
+    secondLine = "Line "
+    for i in range(0, 5):
+        secondLine += "1234567890" + spacer
+    print(secondLine)
+    # Let's use substrings to print the specific num. of nucleotides per line
+    # Use a while loop to remove num. of nucleotides per line from sequence
+    # We only print out 50 nucleotides per line in printWithRuler
+    temp_seq = sequence
+    counter = 1
+    while (len(temp_seq) > 0):
+        if counter < 10000 and counter >= 1000:
+            curr_line = "" + str(counter) + " "
+        elif counter < 1000 and counter >= 100:
+            curr_line = " " + str(counter) + " "
+        elif counter < 100 and counter >= 10:
+            curr_line = "  " + str(counter) + " "
+        else:
+            curr_line = "   " + str(counter) + " "
+        #curr_line = temp_seq[0, 50]
+        temp_curr_line = temp_seq[0 : 50]
+        while(len(temp_curr_line) > 0):
+            curr_line += temp_curr_line[0 : 10] + "" + spacer
+            if len(temp_curr_line) > 10:
+                temp_curr_line = temp_curr_line[10:]
+            else:
+                temp_curr_line = ""
+        print(curr_line)
+        # Remove current line from temp_seq
+        if len(temp_seq) > 50:
+            temp_seq = temp_seq[50:]
+        else:
+            temp_seq = ""
+        counter += 1
+
+def detectHomopolymer(sequence):
+    '''
+    Function to detect the homopolymers in a DNA sequence and return
+    a list with information about detected homopolymers.
+    :param sequence: The DNA sequence observed here.
+    :return: A list containing information about the detected
+    homopolymers in the sequence (e.g., 'C 41 52 12', which represents the type,
+    start position, end position and the length of detected homopolymer respectively).
+    '''
+    # Regex implementation, but we need to change this
+    homo_list = []
+    # Our regex pattern that we match
+    #spattern = r'(.)\1{9,}(?:(?!\1).{0,1}\1\1{9,})*'
+    pattern = r'(.)\1{9,}(?:(?!\1).{0,1}\1\1{9,})*(?:(?!\1).{0,1}\1\1{9,})?'
+
+    # Get iteration matches using finditer()
+    # Finding matches with re.finditer()
+    matches = [match for match in re.finditer(pattern, sequence)]
+    #matches = [match for match in re.findall(pattern, sequence)]
+    #matches = re.finditer(pattern, sequence)
+    #print(matches)
+
+    # Now that we have the matches, we need to change their formatting
+    # and store them in homo_list
+    for match in matches:
+        # Temp string to add information to
+        #print(match)
+        info_str = ""
+        temp_span = match.span()
+        match_str = match.group()
+        #print(temp_span)
+        info_str += str(temp_span[0]) + "_"
+        info_str += str(temp_span[1]-1) + "_"
+        info_str += str((temp_span[1] - temp_span[0])) + "_"
+        info_str += str(match_str[0])
+
+        #info_str = match_ch + "_" + str(start_pos) + "_" + str(end_pos) + "_" + str(len(curr_homo))
+        # Print the iter matches for debugging
+
+        #print(info_str)
+        homo_list.append(info_str)
+
+    return homo_list
+
+def motifSearch(sequence, target):
+    '''
+    This function searches for matches between our DNA sequence
+    and the target motif, and returns a list with information about
+    those motif matches.
+    :param sequence: The DNA sequence observed here.
+    :param target: The target motif (a string) that we search for
+    within the DNA sequence.
+    :return: A list containing information about the detected motif
+    matches (e.g., '41 52 12', which represents the start position,
+    end position and the length of detected motif respectively).
+    '''
+    # List to store our mofit matches
+    motif_list = []
+    # Looks like we need to find EXACT matches between our target motif within
+    # the sequence (no strange conditionals like for homopolymers).
+    # We use a while loop sliding window technique here, and if we find a match,
+    # we move our index/counter by the length of target.
+    counter = 0
+    while (counter < len(sequence)):
+        # Check if we definitely don't have a match
+        #if (counter < len(target) and sequence[counter-(len(target)-1):counter+ 1] != target):
+        if (counter < len(target) and sequence[counter:counter+len(target)] != target):
+            # print sequence[counter-(len(target)-1):counter+ 1] for debugging purposes
+            # print(sequence[counter-(len(target)-1):counter+ 1])
+            # If we don't have a match then keep sliding the window
+            counter += 1
+        # Check if we get a match
+        elif counter == 0 and sequence[0:len(target)] == target:
+            #start_pos = counter - (len(target) - 1)
+            start_pos = 0
+            #end_pos = counter
+            end_pos = len(target) - 1
+            info_str = str(start_pos) + "_" + str(end_pos) + "_" + str(len(target))
+            motif_list.append(info_str)
+            # Increment our counter by len(target) now that we found a match
+            counter += len(target)
+        elif sequence[counter-(len(target)-1):counter+ 1] == target:
+            start_pos = counter-(len(target)-1)
+            end_pos = counter
+            info_str = str(start_pos) + "_" + str(end_pos) + "_" + str(len(target))
+            motif_list.append(info_str)
+            # Increment our counter by len(target) now that we found a match
+            counter += len(target)
+        # Else statement to increment counter normally (shouldn't be triggered/used
+        # but want to avoid infinite looping
+        else:
+            counter += 1
+
+    return motif_list
+
+def printTargets(sequence, listHomo, listMotif):
+    '''
+    This function modifies the sequence
+    :param sequence: The DNA sequence observed here.
+    :param listHomo: List containing information about
+    homopolymers detected in DNA sequence.
+    :param listMotif: List containing information about
+    motifs detected in the DNA sequence.
+    :return: No return, only printing our modified sequence.
+    '''
+    # This function takes three inputs: a given sequence, a list of
+    # detected homopolymers and a list of detected motifs. In this function,
+    # you need to call your function printWithRuler() implemented in Assignment
+    # No.1 to generate the sequence view with spacer and a ruler. This
+    # function will not return anything out of the function.
+
+    # Looks like we modify sequence so that all matches of homopolymers
+    # and motifs in the sequence are lowercase. We do this by using the
+    # indices provided in listHomo and listMotif and converting those indices
+    # to lowercase.
+    # Loop through listHomo and listMotif to get the indices
+    for i in range(0, len(listHomo)):
+        list_elems = listHomo[i].split("_")
+        # (e.g., 'C 41 52 12', which represents the type, start
+        # position, end position and the length of detected homopolymer respectively)
+        start_pos = int(list_elems[0])
+        end_pos = int(list_elems[1])
+        # Now convert elements within this subsequence to lowercase
+        # print(start_pos)
+        # print(end_pos)
+        # print(sequence)
+        # print(sequence[start_pos:end_pos+1])
+        lower_sub = sequence[start_pos:end_pos + 1].lower()
+        # Split up the sequence by strings before the subsequence and after
+        before = sequence[:start_pos]
+        after = sequence[end_pos + 1:]
+        # Add the lower_sub in between the before and after
+        sequence = before + lower_sub + after
+
+    # Loop through listMotif to get the indices
+    for i in range(0, len(listMotif)):
+        list_elems = listMotif[i].split("_")
+        # (e.g., '41 52 12',  which represents the start position,
+        # end position and the length of detected motif respectively)
+        start_pos = int(list_elems[0])
+        end_pos = int(list_elems[1])
+        # Now convert elements within this subsequence to lowercase
+        #print(start_pos)
+        #print(end_pos)
+        #print(sequence)
+        #print(sequence[start_pos:end_pos+1])
+        lower_sub = sequence[start_pos:end_pos + 1].lower()
+        # Split up the sequence by strings before the subsequence and after
+        before = sequence[:start_pos]
+        after = sequence[end_pos + 1:]
+        # Add the lower_sub in between the before and after
+        sequence = before + lower_sub + after
+
+    # Once we converted everything to lowercase, now we print using printWithRuler()
+    # (not sure about the spacer parameter, but I can just default to " ")
+    printWithRuler(sequence, "")
 
 
 class ModifiedFASTAViewer:
