@@ -755,64 +755,65 @@ class ModifiedFASTAViewer:
         self.upload_button.pack(pady=10)
 
         # List containing checkboxes
-        self.cbvars = []
+        self.cbvars = {}
 
         # Create checkboxes for settings
         #checkbox_var1 = tk.BooleanVar()
         spacer_var = tk.BooleanVar()
         self.spacer = tk.Checkbutton(self.master, text="Spacer", onvalue=1, offvalue=0, variable=spacer_var)
-        self.cbvars.append(spacer_var)
+        self.cbvars["spacer"] = spacer_var
         self.spacer.pack()
 
         hp_var = tk.BooleanVar()
         self.homopolymer = tk.Checkbutton(self.master, text="Homopolymer", onvalue=1, offvalue=0, variable=hp_var)
-        self.cbvars.append(hp_var)
+        self.cbvars["homopolymer"] = hp_var
         self.homopolymer.pack()
 
         cpg_var = tk.BooleanVar()
         self.cpg_island = tk.Checkbutton(self.master, text="CpG Island", onvalue=1, offvalue=0, variable=cpg_var)
-        self.cbvars.append(cpg_var)
+        self.cbvars["cpg"] = cpg_var
         self.cpg_island.pack()
 
         # Change motif so that it takes in text input if checked
+        # May just have a text field and check if it's not empty
         motif_var = tk.BooleanVar()
         self.motif_search = tk.Checkbutton(self.master, text="Motif Search", onvalue=1, offvalue=0, variable=motif_var)
-        self.cbvars.append(motif_var)
+        self.cbvars["motif"] = motif_var
         self.motif_search.pack()
 
         codon_var = tk.BooleanVar()
         self.codon_profile = tk.Checkbutton(self.master, text="Codon Profile", onvalue=1, offvalue=0, variable=codon_var)
-        self.cbvars.append(codon_var)
+        self.cbvars["codon"] = codon_var
         self.codon_profile.pack()
 
         prseq_var = tk.BooleanVar()
         self.printSeqFragment = tk.Checkbutton(self.master, text="Print Sequence Fragment", onvalue=1, offvalue=0, variable=prseq_var)
-        self.cbvars.append(prseq_var)
+        self.cbvars["printSeqFragment"] = prseq_var
         self.printSeqFragment.pack()
 
         ptargets_var = tk.BooleanVar()
         self.printTargets = tk.Checkbutton(self.master, text="Print Targets", onvalue=1, offvalue=0, variable=ptargets_var)
-        self.cbvars.append(ptargets_var)
+        self.cbvars["printTargets"] = ptargets_var
         self.printTargets.pack()
 
-        align_var = tk.BooleanVar()
-        self.alignment = tk.Checkbutton(self.master, text="Aligment", onvalue=1, offvalue=0, variable=align_var)
-        self.cbvars.append(align_var)
-        self.alignment.pack()
+        # align_var = tk.BooleanVar()
+        # self.alignment = tk.Checkbutton(self.master, text="Aligment", onvalue=1, offvalue=0, variable=align_var)
+        # self.cbvars["alignment"] = align_var
+        # self.alignment.pack()
 
         pralign_var = tk.BooleanVar()
         self.process_aligned_seq = tk.Checkbutton(self.master, text="Process Aligned Sequence", onvalue=1, offvalue=0, variable=pralign_var)
-        self.cbvars.append(pralign_var)
+        self.cbvars["process_aligned"] = pralign_var
         self.process_aligned_seq.pack()
 
         pos_var = tk.BooleanVar()
         self.positional_matrix = tk.Checkbutton(self.master, text="Positional Matrix", onvalue=1, offvalue=0, variable=pos_var)
-        self.cbvars.append(pos_var)
+        self.cbvars["pos_matrix"] = pos_var
         self.positional_matrix.pack()
 
         showpos_var = tk.BooleanVar()
         self.show_positional_matrix = tk.Checkbutton(self.master, text="Show Positional Matrix", onvalue=1, offvalue=0, variable=showpos_var)
-        self.cbvars.append(showpos_var)
+        self.cbvars["show_pos_matrix"] = showpos_var
         self.show_positional_matrix.pack()
         
         # Update based on the checked boxes
@@ -875,11 +876,14 @@ class ModifiedFASTAViewer:
         # for the selected sequence. After calling those functions, the
         # output is printed to the output table
 
+        # Get the num. of pressed buttons to find the num. of columns needed
+        # in the output table.
+
+
         # Check the list of checkboxes to view which ones were pressed
 
 
-        # Get the num. of pressed buttons to find the num. of columns needed
-        # in the output table.
+
 
         print("Button Pressed")
 
