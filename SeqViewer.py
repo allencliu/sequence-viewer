@@ -4,6 +4,12 @@ from tkinter import filedialog, Text, Listbox, Scrollbar, Toplevel, Label, Butto
 from collections import OrderedDict
 import os
 from tkinter.ttk import Treeview
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import logomaker
+import pandas as pd
+from NeedlemanWunsch_class_updated import Needleman_Wunsch
 
 
 def is_empty_file(filepath):
@@ -213,6 +219,529 @@ def printTargets(sequence, listHomo, listMotif):
     # Once we converted everything to lowercase, now we print using printWithRuler()
     # (not sure about the spacer parameter, but I can just default to " ")
     printWithRuler(sequence, "")
+
+def CpGIsland(sequence):
+    '''
+    Fina all instances of
+    :param sequence: The DNA sequence we are given
+    :return: A dictionary with index locations of CpGIslands
+    as keys and the specific CpGIsland as values
+    '''
+    # We need to use for loops (not regex) to
+    # obtain a dictionary of keys of detected CpGIsland
+    # numbers
+    # Print this for debugging purposes
+    #print("Coming inside ", sequence)
+    # Dictionary we return of CpGIslands as
+    # values and index locations as keys
+    cpgDict = {}
+    # Counter for # of successive CpG pairs
+    counter = 0
+    # Loop through all elements in steps of 1
+    for i in range(0, len(sequence)-1, 1):
+        if (sequence[i] + sequence[i+1]) == "CG":
+            counter += 1
+        # We need to add to our dict if we get 6 pairs
+        elif counter >= 12:
+            key = str(i-(counter+1)) + "-" + i-1 + "_" + counter
+            cpgDict[key] = sequence[i-(counter+1), i]
+        else:
+            counter = 0
+
+    #print("End of CpGIsland")
+    return cpgDict
+
+def translation(sequence):
+    '''
+    Takes DNA sequence as an input and returns a protein
+    sequence (string) after translation.
+    :param sequence: The DNA sequence we are given
+    :return: A protein sequence (string)
+    '''
+    # Use the translation function provided in first class
+    # of this course, but make sure to use nucleotide “T”
+    # to replace “U” because of DNA sequence mentioned here.
+
+    # File name: translation.py
+    trans_dic = {'UUU': 'F', 'UUC': 'F', 'UUA': 'L', 'UUG': 'L',
+                 'CUU': 'L', 'CUC': 'L', 'CUA': 'L', 'CUG': 'L',
+                 'AUU': 'I', 'AUC': 'I', 'AUA': 'I', 'AUG': 'M',
+                 'GUU': 'V', 'GUC': 'V', 'GUA': 'V', 'GUG': 'V',
+                 'UCU': 'S', 'UCC': 'S', 'UCA': 'S', 'UCG': 'S',
+                 'CCU': 'P', 'CCC': 'P', 'CCA': 'P', 'CCG': 'P',
+                 'ACU': 'T', 'ACC': 'T', 'ACA': 'T', 'ACG': 'T',
+                 'GCU': 'A', 'GCC': 'A', 'GCA': 'A', 'GCG': 'A',
+                 'UAU': 'Y', 'UAC': 'Y', 'UAA': '*', 'UAG': '*',
+                 'CAU': 'H', 'CAC': 'H', 'CAA': 'Q', 'CAG': 'Q',
+                 'AAU': 'N', 'AAC': 'N', 'AAA': 'K', 'AAG': 'K',
+                 'GAU': 'D', 'GAC': 'D', 'GAA': 'E', 'GAG': 'E',
+                 'UGU': 'C', 'UGC': 'C', 'UGA': '*', 'UGG': 'W',
+                 'CGU': 'R', 'CGC': 'R', 'CGA': 'R', 'CGG': 'R',
+                 'AGU': 'S', 'AGC': 'S', 'AGA': 'R', 'AGG': 'R',
+                 'GGU': 'G', 'GGC': 'G', 'GGA': 'G', 'GGG': 'G'}
+
+    # Not sure if I need to make additional changes
+    # here to reflect translation. I don't think
+    # I need to reverse the sequence or change out
+    # base pairs with their complements here
+    # (happens in transciption?).
+    dnaseq = sequence
+    rnaseq = dnaseq.replace('T', 'U')
+    # Replace N base with empty space
+    rnaseq = rnaseq.replace('N', '')
+    protein = []
+    for i in range(0, len(rnaseq)-2, 3):
+        protein.append(trans_dic[rnaseq[i:i+3]])
+    #print("".join(protein))
+    # We need to replace U with T since we
+    # are returning a DNA sequence and not RNA
+    #result_dna = "".join(protein)
+    #result_dna = result_dna.replace('U', 'T')
+    return "".join(protein)
+
+def complement(seq_fragment):
+    '''
+    Helper function to get the complement of
+    a sequence fragment.
+    :param seq_fragment: The sequence fragment in question.
+    :return: The complement of the sequence fragment.
+    '''
+    comp = seq_fragment.replace('A', 't').replace('T', 'a').replace('C', 'g').replace('G', 'c')
+    #revcomp = rev.upper()[::-1]
+    comp = comp.upper()
+    return comp
+
+def translation6Frame(sequence):
+    '''
+    :param sequence: The DNA sequence we are given
+    :return: A tuple of protein sequences produced by
+    the sequence.
+    '''
+    # Next, you need to write a new function
+    # translation6Frame(), which takes DNA sequence
+    # as the input and returns 6 protein sequences
+    # as a tuple. Of course, within translation6Frames(),
+    # you need to call translation6Frame()
+    # (or do I call translation() 6 times?)
+    # six times to get these 6 protein sequences.
+
+    # Split the DNA sequence into thirds. We call translation
+    # on each of these thirds and add the result to listProtein.
+    # Reverse the DNA sequence, and repeat the process on the
+    # thirds of the reversed sequence. Then we convert listProtein
+    # to a tuple and return it
+
+    listProtein = []
+    # Split the sequence into 3 substrings
+    #third = int(len(sequence)/3)
+    #listProtein.append(translation(sequence[0:third]))
+    #listProtein.append(translation(sequence[third:third*2]))
+    #listProtein.append(translation(sequence[third*2:len(sequence)]))
+
+    # Reverse the sequence
+    rev_seq = sequence[::-1]
+    #rev_seq = complement(rev_seq)
+    #listProtein.append(translation(rev_seq[0:third]))
+    #listProtein.append(translation(rev_seq[third:third * 2]))
+    #listProtein.append(translation(rev_seq[third*2:len(sequence)]))
+    listProtein.append(translation(rev_seq))
+    listProtein.append(translation(rev_seq[1:]))
+    listProtein.append(translation(rev_seq[2:]))
+
+    listProtein.append(translation(sequence))
+    listProtein.append(translation(sequence[1:]))
+    listProtein.append(translation(sequence[2:]))
+    # Question: What part of the sequence are we pulling
+    # the proteins from, especially since are only returning
+    # a tuple of 6 protein sequences? Ask Liang about this
+
+    # Convert listProtein to a tuple
+    listProtein = tuple(listProtein)
+    return listProtein
+
+
+# Need to revise printSeqFragment, one of the fragments on the top
+# or bottom is incorrect
+def printSeqFragment(seq_fragment, start, end):
+    '''
+
+    :param seq_fragment: The sequence fragment to
+    be printed.
+    :param start: The starting position we print from.
+    :param end: The ending position we stop printing
+    the sequence fragment from.
+    :return:
+    '''
+    # What does the output (letters for proteins) mean
+    # for printSeqFragment? How are they supposed to be
+    # structured? Ask Dr. Liang about this.
+    # It seems like printSeqFragment calls translation6Frame
+
+    # Sounds like we want to actually use the gene complement
+    # on the top and bottom rows instead of reversing it
+
+    # Look at reverse of sequence fragment instead?
+    comp = complement(seq_fragment[start:end])
+    # Tuple storing the 6 protein frames
+    proteins = translation6Frame(seq_fragment[start:end])
+    #proteins = translation6Frame(comp)
+
+    # The complement sequence and protein frames are at the top
+    # Each of the 3 protein layers on top is each of the frames
+    # gathered from translation6frame corresponding to the complement/
+    # original sequence passed (first 3 frames in the tuple).
+
+    # Print the first 3 protein fragments
+    # May need to reformat how these are printed
+    # print(' '.join(intersection_lp))
+    #print(proteins[0])
+    #print(proteins[1])
+    #print(proteins[2])
+    print("  " + "  ".join(proteins[0]))
+    print("   " + "  ".join(proteins[1]))
+    print(" " + "  ".join(proteins[2]))
+    # The selected fragment has a length of 42 nucleotides:
+    # Now we print the first and last 14 chars of the sequence
+    #first_pos = str(seq_fragment[elem][start: start + 14]) + "..." \
+                #+ str(seq_fragment[elem][end - 15: end + 1])
+    rev_fragment = seq_fragment[::-1]
+    # Print out complementary sequence instead?
+    first_pos = str(comp)
+    #first_pos = str(seq_fragment[start:end])
+    print(first_pos)
+    second_pos = "|" * len(first_pos)
+    third_pos = "<" + str(start) + "-" * (len(first_pos) - (len(str(start)) + len(str(end)) + 2)) \
+                + str(end) + ">"
+    print(second_pos)
+    print(third_pos)
+    # AGGATATAGATAAGATAATAGACCACCCATAGA
+    # |||||||||||||||||||||||||||||||||
+    # <58---------------------------99>
+
+
+    # The reversed sequence is at the bottom and the protein frames
+    # are below it. Each of the 3 protein layers on bottom is each of the frames
+    # gathered from translation6frame corresponding to the reversed sequence
+    # passed (last 3 frames in the tuple).
+
+
+
+    # The selected fragment has a length of 42 nucleotides:
+    # Now we print the first and last 14 chars of the sequence
+    bottom_first_pos = str(seq_fragment[start:end])
+    #bottom_first_pos = str(rev_fragment[start:end])
+    print(bottom_first_pos)
+    bottom_second_pos = "|" * len(first_pos)
+    print(bottom_second_pos)
+    # |||||||||||||||||||||||||||||||||
+    # AGGATATAGATAAGATAATAGACCACCCATAGA
+
+    # Print the last 3 protein fragments
+    # May need to reformat how these are printed
+    #print(proteins[3])
+    #print(proteins[4])
+    #print(proteins[5])
+    print(" " +"  ".join(proteins[3]))
+    print("  " + "  ".join(proteins[4]))
+    print("   " + "  ".join(proteins[5]))
+
+def alignment(seq_name_list, seq_list, score_list):
+    '''
+    A function to perform sequence alignment on multiple DNA
+    sequences using the Needleman Wunsch algorithm.
+    :param seq_name_list: A list of DNA sequence names.
+    :param seq_list: A list of DNA sequences.
+    :param score_list: A list of the scoring system we use for
+    match, mismatch, and gap, respectively.
+    :return: Does not return, only prints output (by calling the
+    process_aligned_seq() function).
+    '''
+    # For sequence alignment, you need to implement a new function
+    # alignment(seq_name_list, seq_list), which takes a list of
+    # sequence names and a list of sequences as the input. This
+    # function will not return anything. In this function, you will
+    # use NeedlemanWunsch_class module to conduct pairwise alignments multiple
+    # times. You will do the sequence alignment between the first
+    # sequence and the second, the first and the third, and the first and fourth, etc.
+    # For two aligned sequences that you get for each pair-wise alignment,
+    # you will call a function named process_aligned_seq(aligned_seq1, aligned_seq2)
+    # several times to print the alignments and other information including CIGAR string.
+
+    # This function performs sequence alignment using Needleman Wunsch algorithm
+    # and alignments and other relevant info are printed in process_aligned_seq
+    # We will do pairwise alignment using 2 for loops
+    #for i in range(0, len(seq_list)):
+    # Concretely, you use the first selected sequence as the
+    # reference, and do the pairwise alignment with the second,
+    # third, fourth one, until the last one in the selected
+    # sequences if more than 4 are selected
+    # In this case, we just set i = 0 since we compare first sequence
+    # to all the others
+    i = 0
+    for j in range(0, len(seq_list)):
+        # Perform pairwise alignment for different sequences
+        if i != j:
+            # Perform Needleman Wunsch on our sequences
+            # May need to change scores for match, mismatch, and gap
+            #objA = Needleman_Wunsch(seq_list[i], seq_list[j], 2, -1, -2)
+            #objA = Needleman_Wunsch(seq_list[i], seq_list[j], score_list[0],
+            #                        score_list[1], score_list[2])
+            objA = Needleman_Wunsch(seq_list[i], seq_list[j], score_list[0],
+                                    score_list[1], score_list[2])
+            aligned_seq1, aligned_seq2 = objA.give_final_result()
+
+            # Call process_aligned_seq() with our aligned sequences
+            # Should also pass in sequence names here
+            process_aligned_seq(aligned_seq1, aligned_seq2, seq_name_list[i], seq_name_list[j])
+
+
+def process_aligned_seq(aligned_seq1, aligned_seq2, name_seq1, name_seq2):
+    '''
+
+    :param aligned_seq1:
+    :param aligned_seq2:
+    :return:
+    '''
+    # Within this function, you will generate the middle line of
+    # the alignment and CIGAR string.  You also need to count the
+    # matches, mismatches, insertions or deletions and compute their ratios.
+    # All the print statements for generating the alignment-related printout
+    # should be implemented within this function.
+
+    # Output should look like this:
+    # You need to display this translation for all selected 4 sequences.
+    # [2] Pairwise sequence alignments for the sequence fragments of the selected sequences:
+    # ENSEMBL008   AGGATATAGATAAGATAGACCACCCATAGA
+    #              |||| |||||||||||||| |||||:|| |
+    # ENSEMBL009   AGGA-ATAGATAAGATAGA-CAGGCGTATA
+    #
+    # Identities=26/30 (86.7%) Similarity=27/30 (90.0%) Gaps=2/30 (6.6%) CIGAR = 4M1D14M1D10M
+    # #  You need to display this pairwise sequence alignments for all selected sequence using the
+    # #  first one as the reference.
+    # Check for purines or pyrimidines for the : part of alignment
+    # R: purine (A or G)       Y: pyrimidine (C or T)
+
+    # Count Sequence Identity (number of matches/identical nucleotides)
+    seq_identity = 0
+    # Count Sequence Similarity (number of matches and similar nucleotides like
+    # similar purines, pyrimidines)
+    seq_similarity = 0
+    # Count number of gaps
+    num_gaps = 0
+    # Loop through both sequences and build a string of matches, mismatches, gaps, and :
+    # Assumes both aligned sequences are same length
+    al_str = ""
+    for i in range(0, len(aligned_seq1)):
+        # Print for debugging
+        #print(aligned_seq1[i], aligned_seq2[i])
+
+        # Check for matches
+        if (aligned_seq1[i] == aligned_seq2[i]):
+            al_str += "|"
+            seq_identity += 1
+            seq_similarity += 1
+        # Check for gaps
+        elif (aligned_seq1[i] == "-" or aligned_seq2[i] == "-"):
+            al_str += " "
+            num_gaps += 1
+        # Check for purines or pyrimidines matches (but overall mismatches)
+        elif (aligned_seq1[i] == "A" and aligned_seq2[i] == "G") or \
+            (aligned_seq1[i] == "G" and aligned_seq2[i] == "A") or \
+               (aligned_seq1[i] == "C" and aligned_seq2[i] == "T") or \
+            (aligned_seq1[i] == "T" and aligned_seq2[i] == "C"):
+            al_str += ":"
+            seq_similarity += 1
+        # Otherwise, it is a mismatch
+        else:
+            al_str += " "
+
+
+        cigar_string = ""
+        start = 0
+        end = 0
+
+        # Iterate over both sequences to identify matches and gaps
+        for base1, base2 in zip(aligned_seq1, aligned_seq2):
+            if base1 == base2:
+                end += 1
+            else:
+                # If there's a mismatch, or a gap (insertion or deletion), append to the CIGAR string
+                if start != end:
+                    # In this case we have a match
+                    cigar_string += str(end - start) + "M"
+                start = end + 1
+                end = start
+                if base1 == '-':
+                    # In this case we have insertion in sequence1
+                    cigar_string += "1I"
+                elif base2 == '-':
+                    # In this case we have deletion in sequence1
+                    cigar_string += "1D"
+
+        # Add any remaining matches at the end of the sequences
+        if start != end:
+            cigar_string += str(end - start) + "M"
+        cigar = cigar_string
+
+    # Now we print everything out
+    first_line = name_seq1 + "   " + aligned_seq1
+    second_line = len(name_seq1) * " " + "   " + al_str
+    third_line = name_seq2 + "   " + aligned_seq2
+    print()
+    print(first_line)
+    print(second_line)
+    print(third_line)
+    # ENSEMBL008   AGGATATAGATAAGATAGACCACCCATAGA
+    #              |||| |||||||||||||| |||||:|| |
+    # ENSEMBL009   AGGA-ATAGATAAGATAGA-CAGGCGTATA
+    print()
+    # Now print out additional info
+    # Get CIGAR format
+    ident = (seq_identity/len(aligned_seq1)) * 100
+    ident = round(ident, 2)
+    similarity = (seq_similarity/len(aligned_seq1)) * 100
+    similarity = round(similarity, 2)
+    gaps = (num_gaps/len(aligned_seq1)) * 100
+    gaps = round(gaps, 2)
+    fifth_line = "Identities=" + str(seq_identity) + "/" + str(len(aligned_seq1)) + " (" + \
+                 str(ident) + "%)" + " Similarity=" + str(seq_similarity) + \
+                 "/" + str(len(aligned_seq1)) + " (" + str(similarity) + \
+                 "%)" + " Gaps=" + str(num_gaps) + "/" + str(len(aligned_seq1)) + " (" + \
+                 str(gaps) + "%)" + " CIGAR = " + cigar
+    print(fifth_line)
+    # Identities=26/30 (86.7%) Similarity=27/30 (90.0%) Gaps=2/30 (6.6%) CIGAR = 4M1D14M1D10M
+
+
+def positional_matix(seq_list):
+    '''
+    Function to generate a positional matrix of nucleotides
+    from a list of DNA sequences.
+    :param seq_list: List of DNA sequences
+    :return: A 2-dimensional NumPy array that represents a
+    positional matrix of nucleotides.
+    '''
+    # The function positional_matix(seq_list) will take a list of
+    # sequences as the only input. It will return a 2-dimensional
+    # numpy array that represents the positional matrix. In the lecture on
+    # Numpy array, we provide a good code example from which you can learn from.
+    # Dictionary to store indices for nucleotides
+    nuc_dict = {"A": 0, "T": 1, "G": 2, "C": 3}
+    # Initialize our positional matrix
+    pos_matrix = np.zeros((4, len(seq_list[0])), dtype=int)
+    # Loop through DNA sequences in DNA list
+    for i in range(0, len(seq_list)):
+        # Loop through bases within the current DNA sequence
+        # to add to positional matrix. We use enumerate() to get
+        # the index and element
+        for inx, nucl in enumerate(seq_list[i]):
+            pos_matrix[nuc_dict[nucl]][inx] += 1
+
+    return pos_matrix
+
+def show_positional_matix(my_array):
+    '''
+    Function to print the contents of the positional nucleotide matrix
+    and save a stacked bar chart of the nucleotides.
+    :param my_array: The 2-d NumPy array for positional nucleotide
+    matrix generated in positional_matrix
+    :return: Does not return anything. Instead prints the positional
+    nucleotide matrix and generates and saves an over-stacked bar chart.
+    '''
+    # .  It will not return anything. In this function,
+    # you need to print the positional nucleotide matrix as shown
+    # in Screen 4. You also need to generate an over-stacked bar
+    # chart and save it as an image file named “PNM.jpg”.
+    # nuc_dict = {"A": 0, "T": 1, "G": 2, "C": 3}
+    nuc_list = ["A", "T", "G", "C"]
+    first_line = "Position   "
+    # Loop through all positions in positional matrix
+    for i in range(0, len(my_array[0])):
+        if i < 10:
+            first_line += str(i+1) + "   "
+        elif i < 100:
+            first_line += str(i + 1) + "  "
+
+    second_line = "--------   "
+    for i in range(0,len(my_array[0])):
+        if i < 10:
+            second_line += "--  "
+        elif i < 100:
+            second_line += "--  "
+
+    print(first_line)
+    print(second_line)
+    # Loop through each row in positional matrix
+    for inx, row in enumerate(my_array):
+        curr_line = ""
+        # Loop through each column in positional matrix
+        for i in range(0, len(row)):
+            if i == 0:
+                curr_line += str(nuc_list[inx]) + " " * 10
+                curr_line += str(row[i]) + "   "
+            # elif i < 10:
+            #     curr_line += str(row[i]) + "   "
+            # elif i < 100:
+            #     curr_line += str(row[i]) + "  "
+            # Assume we have less than 1000 nucleotides in our sequence
+            else:
+                curr_line += str(row[i]) + "   "
+        print(curr_line)
+
+    # Position	1	2	3	4	5	6	7	8	9   ……
+    # --------	--	--	--	--	--	--	--	--	--
+    # A	4	0	4	0	0	2	0	0	2
+    # T	0	1	0	3	0	0	4	0	0
+    # G	0	3	0	1	4	0	0	0	0
+    # C	0	0	0	0	0	2	0	4	2
+
+    # Generate plots using matplotlib
+    # This stacked bar chart uses position for the x-axis (colum #)
+    # and percentage of occurrences as the y-axis.
+    plt.rcParams["figure.figsize"] = (10, 10)
+    index = np.arange(0, len(my_array[0]))
+    width = 0.40
+
+    # Change my_array to percentage, divide by 4 (total num of nucleotides
+    # in each column), and then multiply by 100
+    # my_array = np.divide(my_array, 4)
+    # my_array = my_array * 100
+    #print(my_array)
+    # Get nucleotide counts for each position
+    a_counts = my_array[0]
+    t_counts = my_array[1]
+    g_counts = my_array[2]
+    c_counts = my_array[3]
+
+    plt.bar(index, a_counts, width, color='blue', label='A')
+    #plt.bar(index, t_counts, width, color='orange', label='Girls Grades', bottom=a_counts)
+    plt.bar(index, t_counts, width, color='orange', label='T', bottom=a_counts)
+    plt.bar(index, g_counts, width, color='grey', label='G', bottom=a_counts + t_counts)
+    plt.bar(index, c_counts, width, color='yellow', label='C', bottom=a_counts + t_counts + g_counts)
+    plt.title("Positional Nucleotide Matrix")
+    #plt.ylabel("Grades")
+    #plt.xlabel("Schools")
+    plt.xticks(index)
+    plt.legend(loc='best')
+    #plt.show()
+    plt.savefig("PNM.jpg")
+    plt.show()
+
+    # We also add the bonus plot here. In order to get this bonus points,
+    # you need to generate a logo graph using
+    # https://github.com/jbkinney/logomaker/blob/master/logomaker
+    # or any other python module that you can find.
+    # This appears to be the stacked bar chart from before, but
+    # the stacked bars are replaced with stacked letters of nucleotides
+
+    import logomaker
+    # Make my_array into a dataframe to be used with logomaker
+    pos_df = pd.DataFrame(my_array.T)
+    pos_df.columns = ["A", "T", "G", "C"]
+    #print(pos_df)
+    # print(logo)
+    logo = logomaker.Logo(pos_df, font_name='Arial Rounded MT Bold')
+    logo.fig.savefig("Logo.jpg")
+    logo.fig.show()
 
 
 class ModifiedFASTAViewer:
