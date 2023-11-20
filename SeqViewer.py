@@ -743,6 +743,45 @@ def show_positional_matix(my_array):
     logo.fig.savefig("Logo.jpg")
     logo.fig.show()
 
+def codonProfile(sequence):
+    '''
+    Function to create a dictionary of 64 codons as keys
+    and their frequencies as values.
+    :param sequence: The DNA sequence we are given.
+    :return:
+    '''
+    # Initialize the dictionary with 64 codons as the keys
+    # with the values of 0 first. We achieve this using a loop.
+    codonDict = {}
+    # I think I start this with initializing a list of all the
+    # codons, loop through this list to make them keys in our
+    # dictionary, setting those values to 0.
+    codonList = []
+
+    nucl = ["A", "T", "G", "C"]
+    # Using nested for loops to generate all codon combos
+    for first in range(0, len(nucl)):
+        for second in range(0, len(nucl)):
+            for third in range(0, len(nucl)):
+                codonList.append(str(nucl[first] + nucl[second]+ nucl[third]))
+
+    for codon in codonList:
+        codonDict[codon] = 0
+    # Now we need to fill codonDict with the proper frequencies
+    # of codons within our sequence
+    # Loop by 3 codons at a time
+    #print(sequence)
+    # Don't jump by 3, we want to capture all frames
+    for i in range(0, len(sequence) - 2, 1):
+        currCodon = str(sequence[i]) + str(sequence[i+1]) + str(sequence[i+2])
+        #print(currCodon)
+        if currCodon in codonDict.keys():
+            codonDict[currCodon] += 1
+        if (i + 3) > len(sequence) - 1:
+            break
+
+    return codonDict
+
 
 class ModifiedFASTAViewer:
 
@@ -889,18 +928,62 @@ class ModifiedFASTAViewer:
         for func in sel_functions:
             if func == "spacer":
                 # Call the specified function
-                print()
+                # In this case our spacer is " "
+                # Still need to modify printWithRuler to output to textbox
+                for header, sequence in self.sequences.items():
+                    printWithRuler(sequence, " ")
+                # print()
             elif func == "homopolymer":
                 # Call the specified function
-                print()
+                for header, sequence in self.sequences.items():
+                    # Need to store this output to pass to printTargets
+                    detectHomopolymer(sequence)
             elif func == "cpg":
                 # Call the specified function
-                print()
+                for header, sequence in self.sequences.items():
+                    # Need to store this output to pass to textbox
+                    CpGIsland(sequence)
+                # print()
             elif func == "motif":
                 # Call the specified function
+                # Need to modify this to get text input
                 print()
             elif func == "codon":
                 # Call the specified function
+                for header, sequence in self.sequences.items():
+                    # Need to store this output to pass to codon
+                    # Modify this to fit the format of this file
+                    codonDict = codonProfile(sequence)
+                    # print(sequence[elem])
+                    print("Codon Profile:")
+                    firstLine = ">" + seq_name[elem] + " " + description[elem]
+                    print(firstLine)
+                    print(sequence[elem] + "\n")
+
+                    print("			 2nd")
+                    print("         -------------------------------")
+                    print("1st	   T	    C	      A      G     3rd\n")
+                    # Use 3 nested loops to loop through the different codons
+                    # List of nucleoties we loop through
+                    nucl = ["T", "C", "A", "G"]
+                    for first in range(0, len(nucl)):
+
+                        for last in range(0, len(nucl)):
+                            # String that we print out
+                            if last == 0:
+                                tempstr = str(first + 1) + "  	"
+                            else:
+                                tempstr = "        "
+                            # Print out each line for each iteration of third
+                            for middle in range(0, len(nucl)):
+                                codon = nucl[first] + nucl[middle] + nucl[last]
+                                num_matches = str(codonDict[codon])
+                                tempstr += codon + "=" + " " * (3 - len(num_matches)) + num_matches + " "
+                            tempstr += "   " + str(last + 1)
+                            print(tempstr)
+                        # Line separating the end of T codons and beginning of G codons
+                        print()
+
                 print()
             elif func == "printSeqFragment":
                 # Call the specified function
