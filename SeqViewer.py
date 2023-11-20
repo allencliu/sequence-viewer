@@ -878,7 +878,12 @@ class ModifiedFASTAViewer:
 
         # Get the num. of pressed buttons to find the num. of columns needed
         # in the output table.
+        sel_functions = []
+        for key in self.cbvars.keys():
+            if self.cbvars[key] == True:
+                sel_functions.append[key]
 
+        num_functions = len(sel_functions)
 
         # Check the list of checkboxes to view which ones were pressed
 
