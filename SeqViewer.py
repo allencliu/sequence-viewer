@@ -886,7 +886,37 @@ class ModifiedFASTAViewer:
         num_functions = len(sel_functions)
 
         # Check the list of checkboxes to view which ones were pressed
-
+        for func in sel_functions:
+            if func == "spacer":
+                # Call the specified function
+                print()
+            elif func == "homopolymer":
+                # Call the specified function
+                print()
+            elif func == "cpg":
+                # Call the specified function
+                print()
+            elif func == "motif":
+                # Call the specified function
+                print()
+            elif func == "codon":
+                # Call the specified function
+                print()
+            elif func == "printSeqFragment":
+                # Call the specified function
+                print()
+            elif func == "printTargets":
+                # Call the specified function
+                print()
+            elif func == "process_aligned":
+                # Call the specified function
+                print()
+            elif func == "pos_matrix":
+                # Call the specified function
+                print()
+            elif func == "show_pos_matrix":
+                # Call the specified function
+                print()
 
 
 
