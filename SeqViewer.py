@@ -769,44 +769,44 @@ class ModifiedFASTAViewer:
 
 
         # Create checkboxes for settings and pack them horizontally
-        spacer_var = tk.BooleanVar()
+        spacer_var = tk.IntVar()
         self.spacer = tk.Checkbutton(checkbox_frame, text="Spacer", onvalue=1, offvalue=0, variable=spacer_var)
         self.spacer.pack(side=tk.LEFT, padx=5)
         self.cbvars["spacer"] = spacer_var
 
-        hp_var = tk.BooleanVar()
+        hp_var = tk.IntVar()
         self.homopolymer = tk.Checkbutton(checkbox_frame, text="Homopolymer", onvalue=1, offvalue=0, variable= hp_var)
         self.homopolymer.pack(side=tk.LEFT, padx=5)
         self.cbvars["homopolymer"] = hp_var
 
-        cpg_var = tk.BooleanVar()
+        cpg_var = tk.IntVar()
         self.cpg_island = tk.Checkbutton(checkbox_frame, text="CpG Island", onvalue=1, offvalue=0, variable=cpg_var)
         self.cpg_island.pack(side=tk.LEFT, padx=5)
         self.cbvars["cpg"] = cpg_var
 
         # Change motif so that it takes in text input if checked
         # May just have a text field and check if it's not empty
-        motif_var = tk.BooleanVar()
+        motif_var = tk.IntVar()
         self.motif_search = tk.Checkbutton(checkbox_frame, text="Motif Search", onvalue=1, offvalue=0, variable=motif_var)
         self.motif_search.pack(side=tk.LEFT, padx=5)
         self.cbvars["motif"] = motif_var
 
-        codon_var = tk.BooleanVar()
+        codon_var = tk.IntVar()
         self.codon_profile = tk.Checkbutton(checkbox_frame, text="Codon Profile", onvalue=1, offvalue=0, variable=codon_var)
         self.codon_profile.pack(side=tk.LEFT, padx=5)
         self.cbvars["codon"] = codon_var
 
-        prseq_var = tk.BooleanVar()
+        prseq_var = tk.IntVar()
         self.printSeqFragment = tk.Checkbutton(checkbox_frame, text="Print Sequence Fragment", onvalue=1, offvalue=0, variable=prseq_var)
         self.printSeqFragment.pack(side=tk.LEFT, padx=5)
         self.cbvars["printSeqFragment"] = prseq_var
 
-        ptargets_var = tk.BooleanVar()
+        ptargets_var = tk.IntVar()
         self.printTargets = tk.Checkbutton(checkbox_frame, text="Print Targets", onvalue=1, offvalue=0, variable=ptargets_var)
         self.printTargets.pack(side=tk.LEFT, padx=5)
         self.cbvars["printTargets"] = ptargets_var
 
-        pralign_var = tk.BooleanVar()
+        pralign_var = tk.IntVar()
         self.alignment = tk.Checkbutton(checkbox_frame, text="Aligment", onvalue=1, offvalue=0, variable=pralign_var)
         self.alignment.pack(side=tk.LEFT, padx=5)
         self.cbvars["process_aligned"] = pralign_var
@@ -814,12 +814,12 @@ class ModifiedFASTAViewer:
         # self.process_aligned_seq = tk.Checkbutton(checkbox_frame, text="Process Aligned Sequence", onvalue=1, offvalue=0)
         # self.process_aligned_seq.pack(side=tk.LEFT, padx=5)
         
-        pos_var = tk.BooleanVar()
+        pos_var = tk.IntVar()
         self.positional_matrix = tk.Checkbutton(checkbox_frame, text="Positional Matrix", onvalue=1, offvalue=0, variable=pos_var)
         self.positional_matrix.pack(side=tk.LEFT, padx=5)
         self.cbvars["pos_matrix"] = pos_var
 
-        showpos_var = tk.BooleanVar()
+        showpos_var = tk.IntVar()
         self.show_positional_matrix = tk.Checkbutton(checkbox_frame, text="Show Positional Matrix", onvalue=1, offvalue=0, variable=showpos_var)
         self.show_positional_matrix.pack(side=tk.LEFT, padx=5)
         self.cbvars["show_pos_matrix"] = showpos_var
@@ -930,8 +930,9 @@ class ModifiedFASTAViewer:
         # in the output table.
         sel_functions = []
         for key in self.cbvars.keys():
-            if self.cbvars[key] == True:
-                sel_functions.append[key]
+            if self.cbvars[key].get() == 1:
+                sel_functions.append(key)
+            print(self.cbvars[key].get())
 
         num_functions = len(sel_functions)
 
@@ -942,18 +943,18 @@ class ModifiedFASTAViewer:
                 # In this case our spacer is " "
                 # Still need to modify printWithRuler to output to textbox
                 for header, sequence in self.sequences.items():
-                    printWithRuler(sequence, " ")
+                    print_with_ruler(sequence, " ")
                 # print()
             elif func == "homopolymer":
                 # Call the specified function
                 for header, sequence in self.sequences.items():
                     # Need to store this output to pass to printTargets
-                    detectHomopolymer(sequence)
+                    detect_homopolymer(sequence)
             elif func == "cpg":
                 # Call the specified function
                 for header, sequence in self.sequences.items():
                     # Need to store this output to pass to textbox
-                    CpGIsland(sequence)
+                    cpg_island(sequence)
                 # print()
             elif func == "motif":
                 # Call the specified function
@@ -964,7 +965,7 @@ class ModifiedFASTAViewer:
                 for header, sequence in self.sequences.items():
                     # Need to store this output to pass to codon
                     # Modify this to fit the format of this file
-                    codonDict = codonProfile(sequence)
+                    codonDict = codon_profile(sequence)
                     # print(sequence[elem])
                     print("Codon Profile:")
                     #firstLine = ">" + seq_name[elem] + " " + description[elem]
