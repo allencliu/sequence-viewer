@@ -956,9 +956,9 @@ class ModifiedFASTAViewer:
                     codonDict = codonProfile(sequence)
                     # print(sequence[elem])
                     print("Codon Profile:")
-                    firstLine = ">" + seq_name[elem] + " " + description[elem]
-                    print(firstLine)
-                    print(sequence[elem] + "\n")
+                    #firstLine = ">" + seq_name[elem] + " " + description[elem]
+                    #print(firstLine)
+                    print(sequence + "\n")
 
                     print("			 2nd")
                     print("         -------------------------------")
