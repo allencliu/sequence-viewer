@@ -1016,10 +1016,20 @@ class ModifiedFASTAViewer:
                 #print()
             elif func == "pos_matrix":
                 # Call the specified function
+                np_sequence = np.array(self.sequences.items())
+                pos_matrix = positional_matix(np_sequence)
+                #pos_matrix = positional_matix(np_sequence[np_observed])
+                # pos_matrix = positional_matix(np_sequence[np_observed][start_pos : end_pos+1])
+                # Print out the positional matrix using show_positional_matrix
+                # show_positional_matix(pos_matrix)
+
+                # Need to modify show_positional_matrix() to print output in the text box
+                show_positional_matix(pos_matrix)
+
                 print()
-            elif func == "show_pos_matrix":
-                # Call the specified function
-                print()
+            # elif func == "show_pos_matrix":
+            #     # Call the specified function
+            #     print()
 
 
 
