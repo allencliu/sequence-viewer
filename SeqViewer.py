@@ -15,6 +15,8 @@ from NeedlemanWunsch_class_updated import Needleman_Wunsch
 def is_empty_file(filepath):
     return os.path.getsize(filepath) == 0
 
+
+
 def printWithRuler(sequence, spacer):
     '''
     Print the data from the FASTA file with a spacer.
@@ -825,6 +827,7 @@ class ModifiedFASTAViewer:
         self.cbvars["codon"] = codon_var
         self.codon_profile.pack()
 
+        # Need to prompt the user for start and end points, do this through a text box input
         prseq_var = tk.BooleanVar()
         self.printSeqFragment = tk.Checkbutton(self.master, text="Print Sequence Fragment", onvalue=1, offvalue=0, variable=prseq_var)
         self.cbvars["printSeqFragment"] = prseq_var
@@ -987,6 +990,7 @@ class ModifiedFASTAViewer:
                 print()
             elif func == "printSeqFragment":
                 # Call the specified function
+                # Get the start and end points from text input
                 print()
             elif func == "printTargets":
                 # Call the specified function
