@@ -15,8 +15,6 @@ from NeedlemanWunsch_class_updated import Needleman_Wunsch
 def is_empty_file(filepath):
     return os.path.getsize(filepath) == 0
 
-
-
 def printWithRuler(sequence, spacer):
     '''
     Print the data from the FASTA file with a spacer.
@@ -586,9 +584,9 @@ def process_aligned_seq(aligned_seq1, aligned_seq2, name_seq1, name_seq2):
         cigar = cigar_string
 
     # Now we print everything out
-    first_line = name_seq1 + "   " + aligned_seq1
+    first_line = "Sequence number: " + name_seq1 + "   " + aligned_seq1
     second_line = len(name_seq1) * " " + "   " + al_str
-    third_line = name_seq2 + "   " + aligned_seq2
+    third_line = "Sequence number: " + name_seq2 + "   " + aligned_seq2
     print()
     print(first_line)
     print(second_line)
@@ -997,7 +995,25 @@ class ModifiedFASTAViewer:
                 print()
             elif func == "process_aligned":
                 # Call the specified function
-                print()
+                # In this case, we do sequence alignment between all the sequences
+
+                #seq_frags = [s[start_pos: end_pos] for s in sequences]
+
+                #np_seq_name = np.array(seq_name)
+                np_sequence = np.array(self.sequences.items())
+                #np_sequence = np.array(seq_frags)
+                # Filter for selected sequences using observed_seq
+                # np_observed = np.array(observed_seq, dtype=int)
+
+                # Get scoring list, A list of the scoring system we use for
+                # match, mismatch, and gap, respectively.
+                score_list = [2, -1, -2]
+                # Filter for selected sequences using observed_seq
+                np_observed = np.array(np_sequence, dtype=int)
+                np_seq_name = np.arange(len(np_sequence))
+                alignment(np_seq_name[np_observed], np_sequence, score_list)
+
+                #print()
             elif func == "pos_matrix":
                 # Call the specified function
                 print()
