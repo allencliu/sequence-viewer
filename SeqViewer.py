@@ -804,45 +804,72 @@ class ModifiedFASTAViewer:
         # Create a button to upload the FASTA file
         self.upload_button = Button(self.master, text="Upload FASTA", command=self.upload_file)
         self.upload_button.pack(pady=10)
+        
         # List containing checkboxes
         self.cbvars = {}
         # Create a frame for checkboxes
         checkbox_frame = tk.Frame(self.master)
         checkbox_frame.pack()
 
+        
+
+
         # Create checkboxes for settings and pack them horizontally
+        spacer_var = tk.BooleanVar()
         self.spacer = tk.Checkbutton(checkbox_frame, text="Spacer", onvalue=1, offvalue=0)
         self.spacer.pack(side=tk.LEFT, padx=5)
+        self.cbvars["spacer"] = spacer_var
 
+        hp_var = tk.BooleanVar()
         self.homopolymer = tk.Checkbutton(checkbox_frame, text="Homopolymer", onvalue=1, offvalue=0)
         self.homopolymer.pack(side=tk.LEFT, padx=5)
+        self.cbvars["homopolymer"] = hp_var
 
+        cpg_var = tk.BooleanVar()
         self.cpg_island = tk.Checkbutton(checkbox_frame, text="CpG Island", onvalue=1, offvalue=0)
         self.cpg_island.pack(side=tk.LEFT, padx=5)
+        self.cbvars["cpg"] = cpg_var
 
+        # Change motif so that it takes in text input if checked
+        # May just have a text field and check if it's not empty
+        motif_var = tk.BooleanVar()
         self.motif_search = tk.Checkbutton(checkbox_frame, text="Motif Search", onvalue=1, offvalue=0)
         self.motif_search.pack(side=tk.LEFT, padx=5)
+        self.cbvars["motif"] = motif_var
 
+        codon_var = tk.BooleanVar()
         self.codon_profile = tk.Checkbutton(checkbox_frame, text="Codon Profile", onvalue=1, offvalue=0)
         self.codon_profile.pack(side=tk.LEFT, padx=5)
+        self.cbvars["codon"] = codon_var
 
+        prseq_var = tk.BooleanVar()
         self.printSeqFragment = tk.Checkbutton(checkbox_frame, text="Print Sequence Fragment", onvalue=1, offvalue=0)
         self.printSeqFragment.pack(side=tk.LEFT, padx=5)
+        self.cbvars["printSeqFragment"] = prseq_var
 
+        ptargets_var = tk.BooleanVar()
         self.printTargets = tk.Checkbutton(checkbox_frame, text="Print Targets", onvalue=1, offvalue=0)
         self.printTargets.pack(side=tk.LEFT, padx=5)
+        self.cbvars["printTargets"] = ptargets_var
 
+        pralign_var = tk.BooleanVar()
         self.alignment = tk.Checkbutton(checkbox_frame, text="Aligment", onvalue=1, offvalue=0)
         self.alignment.pack(side=tk.LEFT, padx=5)
+        self.cbvars["process_aligned"] = pralign_var
 
-        self.process_aligned_seq = tk.Checkbutton(checkbox_frame, text="Process Aligned Sequence", onvalue=1, offvalue=0)
-        self.process_aligned_seq.pack(side=tk.LEFT, padx=5)
-
+        # self.process_aligned_seq = tk.Checkbutton(checkbox_frame, text="Process Aligned Sequence", onvalue=1, offvalue=0)
+        # self.process_aligned_seq.pack(side=tk.LEFT, padx=5)
+        
+        pos_var = tk.BooleanVar()
         self.positional_matrix = tk.Checkbutton(checkbox_frame, text="Positional Matrix", onvalue=1, offvalue=0)
         self.positional_matrix.pack(side=tk.LEFT, padx=5)
+        self.cbvars["pos_matrix"] = pos_var
 
+        showpos_var = tk.BooleanVar()
         self.show_positional_matrix = tk.Checkbutton(checkbox_frame, text="Show Positional Matrix", onvalue=1, offvalue=0)
         self.show_positional_matrix.pack(side=tk.LEFT, padx=5)
+        self.cbvars["show_pos_matrix"] = showpos_var
+
         
         # Update based on the checked boxes
         self.update_button = Button(self.master, text="Update", command=self.button_pressed)
