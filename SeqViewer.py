@@ -932,7 +932,7 @@ class ModifiedFASTAViewer:
         for key in self.cbvars.keys():
             if self.cbvars[key].get() == 1:
                 sel_functions.append(key)
-            print(self.cbvars[key].get())
+            print(key, self.cbvars[key].get())
 
         num_functions = len(sel_functions)
 
