@@ -37,12 +37,14 @@ def print_with_ruler(seq_name, description, sequence, NucleotidesPerLine, spacer
         NucleotidesPerLine (int): The maximum number of nucleotides to print per line.
         spacer (bool): A flag indicating whether to add spaces between nucleotides.
     """
+    result = ""
     if (
         spacer == False
     ):  # If spacer is set to False, do not add spaces between nucleotides.
         print(
             ">" + seq_name, description, "\n"
         )  # Print the sequence name and description.
+        result = ">" + seq_name, description, "\n"
         repeat_count = NucleotidesPerLine // 10
 
         # Generate a string of repeated digits from 1 to 10 (0) based on repeat_count.
@@ -53,10 +55,14 @@ def print_with_ruler(seq_name, description, sequence, NucleotidesPerLine, spacer
 
         # Print the header row with line numbers and ruler.
         print(f"{1 :> 15}", end="")  # Print the first line number.
+        result += f"{1 :> 15}"
         for k in range(repeat_count - 1):
             print(f"{k + 2 :> 10}", end="")  # Print subsequent line numbers.
+            result += f"{k + 2 :> 10}"
         print()  # Move to the next line.
+        result += "\n"
         print(line_header)  # Print the ruler.
+        result += line_header
 
         # Print the sequence with line numbers and without spaces.
         for i in range(0, len(sequence), NucleotidesPerLine):
@@ -69,10 +75,12 @@ def print_with_ruler(seq_name, description, sequence, NucleotidesPerLine, spacer
 
             # Print the line number and sequence chunk.
             print(f"{i // NucleotidesPerLine + 1 :> 4}", chunk_without_spaces)
+            result += f"{i // NucleotidesPerLine + 1 :> 4}" + chunk_without_spaces
     else:
         print(
             ">" + seq_name, description, "\n"
         )  # Print the sequence name and description.
+        result = f">{seq_name} {description}\n"
         repeat_count = NucleotidesPerLine // 10
 
         # Generate a string of repeated digits from 1 to 10 (0 based on repeat_count.
@@ -83,12 +91,15 @@ def print_with_ruler(seq_name, description, sequence, NucleotidesPerLine, spacer
 
         # Print the header row with line numbers and ruler.
         print(f"{1 :> 15}", end="")  # Print the first line number.
+        result += f"{1 :> 15}"
         for k in range(repeat_count - 1):
             print(
                 f"{k + 2 :> 11}", end=""
             )  # Print subsequent line numbers with extra spacing.
+            result += f"{k + 2 :> 11}"
         print()  # Move to the next line.
         print(line_header)  # Print the ruler.
+        result += f"\n{line_header}"
 
         # Print the sequence with line numbers and spaces.
         for i in range(0, len(sequence), NucleotidesPerLine):
@@ -101,7 +112,8 @@ def print_with_ruler(seq_name, description, sequence, NucleotidesPerLine, spacer
 
             # Print the line number and sequence chunk.
             print(f"{i // NucleotidesPerLine + 1 :> 4}", chunk_with_spaces)
-
+            result += f"\n{i // NucleotidesPerLine + 1: >4} {chunk_with_spaces}"
+    return result
 def detect_homopolymer(sequence):
     """Detect homopolymer sequences in a DNA sequence.
 
@@ -948,8 +960,10 @@ class ModifiedFASTAViewer:
                     # In this case our spacer is " "
                     # Still need to modify printWithRuler to output to textbox
                     name, description, sequence, length = self.get_header_sequence()
-                    print(name)
-                    # print_with_ruler()
+                    # print(name)
+                    result = print_with_ruler(name, description, sequence, 50, True)
+                    self.sequence_table_display.delete(1.0, tk.END)
+                    self.sequence_table_display.insert(tk.END, result)
                     # print()
                 if key == "homopolymer":
                     # Call the specified function
