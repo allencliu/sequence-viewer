@@ -918,7 +918,19 @@ class ModifiedFASTAViewer:
         # checkboxes were checked and call the corresponding functions
         # for the selected sequence. After calling those functions, the
         # output is printed to the output table
+        
+    def get_header_sequence(self):
+        selected_item = self.tree.focus()
+        if not selected_item:
+            return
+        header = ">" + self.tree.item(selected_item, "values")[0] + " " + self.tree.item(selected_item, "values")[1]
+        name = self.tree.item(selected_item, "values")[0]
+        description = self.tree.item(selected_item, "values")[1]
+        sequence = self.sequences[header]
+        length = len(sequence)
 
+        return name, description, sequence, length
+    
     def button_pressed(self):
         # Function for when our update button is pressed.
         # Once self.update_button has been clicked, we need to see what
@@ -928,93 +940,84 @@ class ModifiedFASTAViewer:
 
         # Get the num. of pressed buttons to find the num. of columns needed
         # in the output table.
-        sel_functions = []
         for key in self.cbvars.keys():
             if self.cbvars[key].get() == 1:
-                sel_functions.append(key)
-            print(key, self.cbvars[key].get())
+                # Check the list of checkboxes to view which ones were pressed
+                if key == "spacer":
+                    # Call the specified function
+                    # In this case our spacer is " "
+                    # Still need to modify printWithRuler to output to textbox
+                    name, description, sequence, length = self.get_header_sequence()
+                    print(name)
+                    # print_with_ruler()
+                    # print()
+                if key == "homopolymer":
+                    # Call the specified function
+                    for header, sequence in self.sequences.items():
+                        # Need to store this output to pass to printTargets
+                        detect_homopolymer(sequence)
+                if key == "cpg":
+                    # Call the specified function
+                    for header, sequence in self.sequences.items():
+                        # Need to store this output to pass to textbox
+                        cpg_island(sequence)
+                    # print()
+                if key == "motif":
+                    # Call the specified function
+                    # Need to modify this to get text input
+                    print()
+                if key == "codon":
+                    # Call the specified function
+                    for header, sequence in self.sequences.items():
+                        # Need to store this output to pass to codon
+                        # Modify this to fit the format of this file
+                        codonDict = codon_profile(sequence)
+                        # print(sequence[elem])
+                        print("Codon Profile:")
+                        #firstLine = ">" + seq_name[elem] + " " + description[elem]
+                        #print(firstLine)
+                        print(sequence + "\n")
 
-        num_functions = len(sel_functions)
+                        print("			 2nd")
+                        print("         -------------------------------")
+                        print("1st	   T	    C	      A      G     3rd\n")
+                        # Use 3 nested loops to loop through the different codons
+                        # List of nucleoties we loop through
+                        nucl = ["T", "C", "A", "G"]
+                        for first in range(0, len(nucl)):
 
-        # Check the list of checkboxes to view which ones were pressed
-        for func in sel_functions:
-            if func == "spacer":
-                # Call the specified function
-                # In this case our spacer is " "
-                # Still need to modify printWithRuler to output to textbox
-                for header, sequence in self.sequences.items():
-                    print_with_ruler(sequence, " ")
-                # print()
-            elif func == "homopolymer":
-                # Call the specified function
-                for header, sequence in self.sequences.items():
-                    # Need to store this output to pass to printTargets
-                    detect_homopolymer(sequence)
-            elif func == "cpg":
-                # Call the specified function
-                for header, sequence in self.sequences.items():
-                    # Need to store this output to pass to textbox
-                    cpg_island(sequence)
-                # print()
-            elif func == "motif":
-                # Call the specified function
-                # Need to modify this to get text input
-                print()
-            elif func == "codon":
-                # Call the specified function
-                for header, sequence in self.sequences.items():
-                    # Need to store this output to pass to codon
-                    # Modify this to fit the format of this file
-                    codonDict = codon_profile(sequence)
-                    # print(sequence[elem])
-                    print("Codon Profile:")
-                    #firstLine = ">" + seq_name[elem] + " " + description[elem]
-                    #print(firstLine)
-                    print(sequence + "\n")
+                            for last in range(0, len(nucl)):
+                                # String that we print out
+                                if last == 0:
+                                    tempstr = str(first + 1) + "  	"
+                                else:
+                                    tempstr = "        "
+                                # Print out each line for each iteration of third
+                                for middle in range(0, len(nucl)):
+                                    codon = nucl[first] + nucl[middle] + nucl[last]
+                                    num_matches = str(codonDict[codon])
+                                    tempstr += codon + "=" + " " * (3 - len(num_matches)) + num_matches + " "
+                                tempstr += "   " + str(last + 1)
+                                print(tempstr)
+                            # Line separating the end of T codons and beginning of G codons
+                # elif func == "printSeqFragment":
+                #     # Call the specified function
+                #     print()
+                if key == "printTargets":
+                    # Call the specified function
+                    print()
+                if key == "process_aligned":
+                    # Call the specified function
+                    print()
+                if key == "pos_matrix":
+                    # Call the specified function
+                    print()
+                if key == "show_pos_matrix":
+                    # Call the specified function
+                    print()
+                print(key, self.cbvars[key].get())
 
-                    print("			 2nd")
-                    print("         -------------------------------")
-                    print("1st	   T	    C	      A      G     3rd\n")
-                    # Use 3 nested loops to loop through the different codons
-                    # List of nucleoties we loop through
-                    nucl = ["T", "C", "A", "G"]
-                    for first in range(0, len(nucl)):
-
-                        for last in range(0, len(nucl)):
-                            # String that we print out
-                            if last == 0:
-                                tempstr = str(first + 1) + "  	"
-                            else:
-                                tempstr = "        "
-                            # Print out each line for each iteration of third
-                            for middle in range(0, len(nucl)):
-                                codon = nucl[first] + nucl[middle] + nucl[last]
-                                num_matches = str(codonDict[codon])
-                                tempstr += codon + "=" + " " * (3 - len(num_matches)) + num_matches + " "
-                            tempstr += "   " + str(last + 1)
-                            print(tempstr)
-                        # Line separating the end of T codons and beginning of G codons
-                        print()
-
-                print()
-            # elif func == "printSeqFragment":
-            #     # Call the specified function
-            #     print()
-            elif func == "printTargets":
-                # Call the specified function
-                print()
-            elif func == "process_aligned":
-                # Call the specified function
-                print()
-            elif func == "pos_matrix":
-                # Call the specified function
-                print()
-            elif func == "show_pos_matrix":
-                # Call the specified function
-                print()
-
-
-
+        
         print("Button Pressed")
 
     def upload_file(self):
