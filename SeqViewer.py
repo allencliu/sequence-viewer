@@ -796,10 +796,10 @@ class ModifiedFASTAViewer:
         self.codon_profile.pack(side=tk.LEFT, padx=5)
         self.cbvars["codon"] = codon_var
 
-        prseq_var = tk.IntVar()
-        self.printSeqFragment = tk.Checkbutton(checkbox_frame, text="Print Sequence Fragment", onvalue=1, offvalue=0, variable=prseq_var)
-        self.printSeqFragment.pack(side=tk.LEFT, padx=5)
-        self.cbvars["printSeqFragment"] = prseq_var
+        # prseq_var = tk.IntVar()
+        # self.printSeqFragment = tk.Checkbutton(checkbox_frame, text="Print Sequence Fragment", onvalue=1, offvalue=0, variable=prseq_var)
+        # self.printSeqFragment.pack(side=tk.LEFT, padx=5)
+        # self.cbvars["printSeqFragment"] = prseq_var
 
         ptargets_var = tk.IntVar()
         self.printTargets = tk.Checkbutton(checkbox_frame, text="Print Targets", onvalue=1, offvalue=0, variable=ptargets_var)
@@ -997,9 +997,9 @@ class ModifiedFASTAViewer:
                         print()
 
                 print()
-            elif func == "printSeqFragment":
-                # Call the specified function
-                print()
+            # elif func == "printSeqFragment":
+            #     # Call the specified function
+            #     print()
             elif func == "printTargets":
                 # Call the specified function
                 print()
