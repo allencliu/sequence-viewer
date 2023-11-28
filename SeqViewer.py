@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import logomaker
 import pandas as pd
+import regex
 from NeedlemanWunsch_class_updated import Needleman_Wunsch
 
 
@@ -952,6 +953,8 @@ class ModifiedFASTAViewer:
 
         # Get the num. of pressed buttons to find the num. of columns needed
         # in the output table.
+        name, description, sequence, length = self.get_header_sequence()
+        self.sequence_table_display.delete(1.0, tk.END)
         for key in self.cbvars.keys():
             if self.cbvars[key].get() == 1:
                 # Check the list of checkboxes to view which ones were pressed
@@ -959,17 +962,17 @@ class ModifiedFASTAViewer:
                     # Call the specified function
                     # In this case our spacer is " "
                     # Still need to modify printWithRuler to output to textbox
-                    name, description, sequence, length = self.get_header_sequence()
                     # print(name)
                     result = print_with_ruler(name, description, sequence, 50, True)
-                    self.sequence_table_display.delete(1.0, tk.END)
-                    self.sequence_table_display.insert(tk.END, result)
+                    self.sequence_table_display.insert(tk.END, result + "\n")
                     # print()
                 if key == "homopolymer":
                     # Call the specified function
-                    for header, sequence in self.sequences.items():
                         # Need to store this output to pass to printTargets
-                        detect_homopolymer(sequence)
+                        homopolymers = detect_homopolymer(sequence)
+                        print(homopolymers)
+                        self.sequence_table_display.insert(tk.END, homopolymers)
+
                 if key == "cpg":
                     # Call the specified function
                     for header, sequence in self.sequences.items():
