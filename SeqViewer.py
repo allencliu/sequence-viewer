@@ -12,6 +12,10 @@ import pandas as pd
 import regex
 from NeedlemanWunsch_class_updated import Needleman_Wunsch
 
+import cgi
+import mysql.connector
+
+
 
 def is_empty_file(filepath):
     return os.path.getsize(filepath) == 0
@@ -762,6 +766,114 @@ def codon_profile(sequence):
     return codon_dict
 
 
+
+# Connect to the database
+import mysql.connector
+from mysql.connector import Error
+
+# Function to create a MySQL database connection
+def create_connection(host, user, password):
+    connection = None
+    try:
+        connection = mysql.connector.connect(
+            host=host,
+            user=user,
+            password=password
+        )
+        print("Connected to MySQL Server")
+    except Error as e:
+        print(f"Error: {e}")
+    return connection
+
+# Function to create a new database
+def create_database(connection, db_name):
+    try:
+        cursor = connection.cursor()
+        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
+        print(f"Database '{db_name}' created successfully")
+    except Error as e:
+        print(f"Error: {e}")
+
+# Function to execute DDL statements for table creation
+def create_tables(connection, ddl_statements):
+    try:
+        cursor = connection.cursor()
+        for statement in ddl_statements:
+            cursor.execute(statement)
+        print("Tables created successfully")
+    except Error as e:
+        print(f"Error: {e}")
+
+# Function to process data, extract information, and create tab-delimited text files
+def process_data_and_create_txt_files(connection):
+    # Replace the following with your own data processing logic
+    data_processing_result = [
+        ("John Doe", 25, "john.doe@example.com"),
+        ("Jane Smith", 30, "jane.smith@example.com")
+    ]
+
+    # Create a tab-delimited txt file for each table
+    for table_data in data_processing_result:
+        table_name = "SEQUENCE"
+        file_name = f"{table_name}.txt"
+        with open(file_name, "w") as file:
+            file.write("\t".join(map(str, table_data)))
+        print(f"File '{file_name}' created successfully")
+
+# Use this command to connect to db on ubuntu for remote access:
+# mysql -u zigmonsg -p -h bio466-f15.csi.miamioh.edu
+
+
+# Main script
+if __name__ == "__main__":
+    # Replace with your own database and user credentials
+    # Remote hostname/IP address
+    #host_name = "bio466-f15.csi.miamioh.edu"
+    host_name = "localhost"
+    user_name = "zigmonsg@localhost"
+    user_password = "bio466"
+    database_name = "zigmonsg"
+
+    # DDL statements for table creation
+    ddl_statements = [
+        """
+        CREATE TABLE IF NOT EXISTS SEQUENCE (
+            SEQUENCE_ID INT AUTO_INCREMENT PRIMARY KEY,
+            SEQUENCE_NAME VARCHAR(255),
+            SEQUENCE VARCHAR(255),
+            SEQUENCE_TYPE VARCHAR(255)
+        )
+        """
+        # Add more DDL statements for additional tables if needed
+    ]
+
+    # Create a connection to MySQL server
+    connection = create_connection(host_name, user_name, user_password)
+
+    if connection:
+        # Create the database
+        create_database(connection, database_name)
+
+        # Switch to the created database
+        connection.database = database_name
+
+        # Create tables using DDL statements
+        create_tables(connection, ddl_statements)
+
+        # Process data, extract information, and create tab-delimited text files
+        #process_data_and_create_txt_files(connection)
+
+        # Close the database connection
+        connection.close()
+
+
+# Import text file of sequence input into the table
+# Second, you can issue the following command line described in the file seq.commandline.insert.txt
+# mysqlimport -L -u zigmonsg -p bio466 seq.txt -h bio466-f15.csi.miamioh.edu
+# mysqlimport -L -u zigmonsg -p bio466 seq.txt
+# from subprocess import call
+# call('mysqlimport -u zigmonsg -p bio466 seq.txt -h bio466-f15.csi.miamioh.edu', shell=True)
+
 class ModifiedFASTAViewer:
 
     def __init__(self, master):
@@ -954,6 +1066,20 @@ class ModifiedFASTAViewer:
         # Get the num. of pressed buttons to find the num. of columns needed
         # in the output table.
         name, description, sequence, length = self.get_header_sequence()
+
+        data_processing_result = [
+            (14, name, sequence, "read")
+        ]
+
+        # Create a tab-delimited txt file for each table
+        for table_data in data_processing_result:
+            table_name = "SEQUENCE"
+            file_name = f"{table_name}.txt"
+            with open(file_name, "w") as file:
+                file.write("\t".join(map(str, table_data)))
+            print(f"File '{file_name}' created successfully")
+
+
         self.sequence_table_display.delete(1.0, tk.END)
         for key in self.cbvars.keys():
             if self.cbvars[key].get() == 1:
