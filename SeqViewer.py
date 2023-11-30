@@ -78,9 +78,9 @@ def print_with_ruler(seq_name, description, sequence, NucleotidesPerLine, spacer
             print(f"{i // NucleotidesPerLine + 1 :> 4}", chunk_without_spaces)
             result += f"{i // NucleotidesPerLine + 1 :> 4}" + chunk_without_spaces
     else:
-        print(
-            ">" + seq_name, description, "\n"
-        )  # Print the sequence name and description.
+        # print(
+        #     ">" + seq_name, description, "\n"
+        # )  # Print the sequence name and description.
         result = f">{seq_name} {description}\n"
         repeat_count = NucleotidesPerLine // 10
 
@@ -91,15 +91,15 @@ def print_with_ruler(seq_name, description, sequence, NucleotidesPerLine, spacer
         line_header = " ".join(["Line", repeated_string])
 
         # Print the header row with line numbers and ruler.
-        print(f"{1 :> 15}", end="")  # Print the first line number.
+        # print(f"{1 :> 15}", end="")  # Print the first line number.
         result += f"{1 :> 15}"
         for k in range(repeat_count - 1):
-            print(
-                f"{k + 2 :> 11}", end=""
-            )  # Print subsequent line numbers with extra spacing.
+            # print(
+            #     f"{k + 2 :> 11}", end=""
+            # )  # Print subsequent line numbers with extra spacing.
             result += f"{k + 2 :> 11}"
-        print()  # Move to the next line.
-        print(line_header)  # Print the ruler.
+        # print()  # Move to the next line.
+        # print(line_header)  # Print the ruler.
         result += f"\n{line_header}"
 
         # Print the sequence with line numbers and spaces.
@@ -112,7 +112,7 @@ def print_with_ruler(seq_name, description, sequence, NucleotidesPerLine, spacer
             )
 
             # Print the line number and sequence chunk.
-            print(f"{i // NucleotidesPerLine + 1 :> 4}", chunk_with_spaces)
+            # print(f"{i // NucleotidesPerLine + 1 :> 4}", chunk_with_spaces)
             result += f"\n{i // NucleotidesPerLine + 1: >4} {chunk_with_spaces}"
     return result
 def detect_homopolymer(sequence):
@@ -782,16 +782,11 @@ class ModifiedFASTAViewer:
 
 
         # Create checkboxes for settings and pack them horizontally
-        spacer_var = tk.IntVar()
-        self.spacer = tk.Checkbutton(checkbox_frame, text="Spacer", onvalue=1, offvalue=0, variable=spacer_var)
-        self.spacer.pack(side=tk.LEFT, padx=5)
-        self.cbvars["spacer"] = spacer_var
-
         hp_var = tk.IntVar()
         self.homopolymer = tk.Checkbutton(checkbox_frame, text="Homopolymer", onvalue=1, offvalue=0, variable= hp_var)
         self.homopolymer.pack(side=tk.LEFT, padx=5)
         self.cbvars["homopolymer"] = hp_var
-
+    
         cpg_var = tk.IntVar()
         self.cpg_island = tk.Checkbutton(checkbox_frame, text="CpG Island", onvalue=1, offvalue=0, variable=cpg_var)
         self.cpg_island.pack(side=tk.LEFT, padx=5)
@@ -835,7 +830,12 @@ class ModifiedFASTAViewer:
         showpos_var = tk.IntVar()
         self.show_positional_matrix = tk.Checkbutton(checkbox_frame, text="Show Positional Matrix", onvalue=1, offvalue=0, variable=showpos_var)
         self.show_positional_matrix.pack(side=tk.LEFT, padx=5)
-        self.cbvars["show_pos_matrix"] = showpos_var
+        self.cbvars["show_pos_matrix"] = showpos_var    
+
+        spacer_var = tk.IntVar()
+        self.spacer = tk.Checkbutton(checkbox_frame, text="Spacer", onvalue=1, offvalue=0, variable=spacer_var)
+        self.spacer.pack(side=tk.LEFT, padx=5)
+        self.cbvars["spacer"] = spacer_var
 
         
         # Update based on the checked boxes
@@ -957,85 +957,50 @@ class ModifiedFASTAViewer:
         self.sequence_table_display.delete(1.0, tk.END)
         for key in self.cbvars.keys():
             if self.cbvars[key].get() == 1:
-                # Check the list of checkboxes to view which ones were pressed
-                if key == "spacer":
-                    # Call the specified function
-                    # In this case our spacer is " "
-                    # Still need to modify printWithRuler to output to textbox
-                    # print(name)
-                    result = print_with_ruler(name, description, sequence, 50, True)
-                    self.sequence_table_display.insert(tk.END, result + "\n")
-                    # print()
                 if key == "homopolymer":
-                    # Call the specified function
-                        # Need to store this output to pass to printTargets
                         homopolymers = detect_homopolymer(sequence)
-                        print(homopolymers)
-                        self.sequence_table_display.insert(tk.END, homopolymers)
-
+                        for homopolymer in homopolymers:
+                            start = int(homopolymer.split("_")[0].split("-")[0])
+                            end = int(homopolymer.split("_")[0].split("-")[1]) + 1
+                            sequence = sequence[:start] + sequence[start:end].lower() + sequence[end:]
+                            # print(start, end)
+                        # print(sequence)
+                        # print(homopolymers)
+                        self.sequence_table_display.delete(1.0, tk.END)
+                        self.sequence_table_display.insert(tk.END, sequence)
                 if key == "cpg":
-                    # Call the specified function
-                    for header, sequence in self.sequences.items():
-                        # Need to store this output to pass to textbox
-                        cpg_island(sequence)
-                    # print()
+                    cpg_islands = cpg_island(sequence)
+                    print(cpg_islands)
+                    for key in cpg_islands.keys():
+                        start = int(cpg_islands[key].split("_")[0].split("-")[0])
+                        end = int(cpg_islands[key].split("_")[0].split("-")[1]) + 1
+                        sequence = sequence[:start] + sequence[start:end].lower() + sequence[end:]
+                    self.sequence_table_display.delete(1.0, tk.END)
+                    self.sequence_table_display.insert(tk.END, sequence)
+
                 if key == "motif":
-                    # Call the specified function
-                    # Need to modify this to get text input
-                    print()
+                    return
                 if key == "codon":
-                    # Call the specified function
-                    for header, sequence in self.sequences.items():
-                        # Need to store this output to pass to codon
-                        # Modify this to fit the format of this file
-                        codonDict = codon_profile(sequence)
-                        # print(sequence[elem])
-                        print("Codon Profile:")
-                        #firstLine = ">" + seq_name[elem] + " " + description[elem]
-                        #print(firstLine)
-                        print(sequence + "\n")
-
-                        print("			 2nd")
-                        print("         -------------------------------")
-                        print("1st	   T	    C	      A      G     3rd\n")
-                        # Use 3 nested loops to loop through the different codons
-                        # List of nucleoties we loop through
-                        nucl = ["T", "C", "A", "G"]
-                        for first in range(0, len(nucl)):
-
-                            for last in range(0, len(nucl)):
-                                # String that we print out
-                                if last == 0:
-                                    tempstr = str(first + 1) + "  	"
-                                else:
-                                    tempstr = "        "
-                                # Print out each line for each iteration of third
-                                for middle in range(0, len(nucl)):
-                                    codon = nucl[first] + nucl[middle] + nucl[last]
-                                    num_matches = str(codonDict[codon])
-                                    tempstr += codon + "=" + " " * (3 - len(num_matches)) + num_matches + " "
-                                tempstr += "   " + str(last + 1)
-                                print(tempstr)
-                            # Line separating the end of T codons and beginning of G codons
-                # elif func == "printSeqFragment":
-                #     # Call the specified function
-                #     print()
+                    return
                 if key == "printTargets":
-                    # Call the specified function
-                    print()
+                    return
                 if key == "process_aligned":
-                    # Call the specified function
-                    print()
+                    return
                 if key == "pos_matrix":
-                    # Call the specified function
-                    print()
+                    return
                 if key == "show_pos_matrix":
-                    # Call the specified function
-                    print()
-                print(key, self.cbvars[key].get())
+                    return
+                if key == "spacer":
+                    sequence = print_with_ruler(name, description, sequence, 100, True)
+                    self.sequence_table_display.delete(1.0, tk.END)
+                    self.sequence_table_display.insert(tk.END, sequence + "\n")
+                    # print()
+        self.sequence_table_display.delete(1.0, tk.END)
+        self.sequence_table_display.insert(tk.END, sequence)
+                    
 
         
-        print("Button Pressed")
+        # print("Button Pressed")
 
     def upload_file(self):
         # Open a file dialog to select the FASTA file
