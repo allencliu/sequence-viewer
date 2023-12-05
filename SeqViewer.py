@@ -43,9 +43,9 @@ def print_with_ruler(seq_name, description, sequence, NucleotidesPerLine, spacer
         spacer == False
     ):  # If spacer is set to False, do not add spaces between nucleotides.
         print(
-            ">" + seq_name, description, "\n"
+            # ">" + seq_name, description, "\n"
         )  # Print the sequence name and description.
-        result = ">" + seq_name, description, "\n"
+        result = f">{seq_name} {description}\n"
         repeat_count = NucleotidesPerLine // 10
 
         # Generate a string of repeated digits from 1 to 10 (0) based on repeat_count.
@@ -55,15 +55,14 @@ def print_with_ruler(seq_name, description, sequence, NucleotidesPerLine, spacer
         line_header = " ".join(["Line", repeated_string])
 
         # Print the header row with line numbers and ruler.
-        print(f"{1 :> 15}", end="")  # Print the first line number.
+        # print(f"{1 :> 15}", end="")  # Print the first line number.
         result += f"{1 :> 15}"
         for k in range(repeat_count - 1):
-            print(f"{k + 2 :> 10}", end="")  # Print subsequent line numbers.
+            # print(f"{k + 2 :> 10}", end="")  # Print subsequent line numbers.
             result += f"{k + 2 :> 10}"
-        print()  # Move to the next line.
-        result += "\n"
-        print(line_header)  # Print the ruler.
-        result += line_header
+        # print()  # Move to the next line.
+        # print(line_header)  # Print the ruler.
+        result += f"\n{line_header}"
 
         # Print the sequence with line numbers and without spaces.
         for i in range(0, len(sequence), NucleotidesPerLine):
@@ -75,8 +74,8 @@ def print_with_ruler(seq_name, description, sequence, NucleotidesPerLine, spacer
             )
 
             # Print the line number and sequence chunk.
-            print(f"{i // NucleotidesPerLine + 1 :> 4}", chunk_without_spaces)
-            result += f"{i // NucleotidesPerLine + 1 :> 4}" + chunk_without_spaces
+            # print(f"{i // NucleotidesPerLine + 1 :> 4}", chunk_without_spaces)
+            result += f"\n{i // NucleotidesPerLine + 1 :> 4} {chunk_without_spaces}"
     else:
         # print(
         #     ">" + seq_name, description, "\n"
@@ -991,12 +990,14 @@ class ModifiedFASTAViewer:
                 if key == "show_pos_matrix":
                     return
                 if key == "spacer":
+                    # print(sequence)
                     sequence = print_with_ruler(name, description, sequence, 100, True)
                     self.sequence_table_display.delete(1.0, tk.END)
                     self.sequence_table_display.insert(tk.END, sequence + "\n")
                     # print()
-        self.sequence_table_display.delete(1.0, tk.END)
-        self.sequence_table_display.insert(tk.END, sequence)
+                else:
+                    self.sequence_table_display.delete(1.0, tk.END)
+                    self.sequence_table_display.insert(tk.END, print_with_ruler(name, description, sequence, 100, False))
                     
 
         
@@ -1122,6 +1123,7 @@ class UpdatedFASTAViewer(ModifiedFASTAViewer):
             return
         header = ">" + self.tree.item(selected_item, "values")[0] + " " + self.tree.item(selected_item, "values")[1]
         sequence = self.sequences[header]
+        sequence = print_with_ruler(self.tree.item(selected_item, "values")[0], self.tree.item(selected_item, "values")[1], sequence, 100, False)
         # print(sequence)
 
         # If sequence length exceeds 5000, open it in a new window
