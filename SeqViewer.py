@@ -883,6 +883,14 @@ if __name__ == "__main__":
 # from subprocess import call
 # call('mysqlimport -u zigmonsg -p bio466 seq.txt -h bio466-f15.csi.miamioh.edu', shell=True)
 
+#import pymysql
+#db = pymysql.connect(host="localhost", user="zigmonsg", passwd="bio466", db="zigmonsg")
+#db = pymysql.connect(host="bio466-f15.csi.miamioh.edu", user="zigmonsg", passwd="bio466", db="zigmonsg")
+# Create a Cursor object to execute queries.
+#cur = db.cursor()
+#cur.execute("SELECT * FROM seq1") # Select data from table using SQL query.
+# cur.execute("INSERT INTO sequences (seq_name, sequence, seq_description) VALUES") # Select data from table using SQL query.
+
 class ModifiedFASTAViewer:
 
     def __init__(self, master):
@@ -1076,8 +1084,15 @@ class ModifiedFASTAViewer:
         # in the output table.
         #name, description, sequence, length = self.get_header_sequence()
 
+
+        # Create a new file for DML/insertion
+        with open("seq.txt", "w") as file:
+            file.write("INSERT INTO sequences (seq_name, sequence, seq_description) VALUES ")
+
+
         #for selected_item in self.tree:
-        for selected_item in self.tree.get_children():
+        #for selected_item in self.tree.get_children():
+        for inx, selected_item in enumerate(self.tree.get_children()):
             print(selected_item)
 
             header = ">" + self.tree.item(selected_item, "values")[0] + " " + self.tree.item(selected_item, "values")[1]
@@ -1087,6 +1102,11 @@ class ModifiedFASTAViewer:
             length = len(sequence)
 
             print(name)
+
+            # Insert data into our table using SQL query.
+            #cur.execute("INSERT INTO sequences (seq_name, sequence, seq_description) VALUES (", name, sequence, description, ")")
+
+            description = description.split(",")[0]
 
             data_processing_result = [
                 (name, sequence, description)
@@ -1099,7 +1119,15 @@ class ModifiedFASTAViewer:
                 #file_name = f"{table_name}.txt"
                 #with open(file_name, "a") as file:
                 with open(file_name, "a") as file:
-                    file.write("\t".join(map(str, table_data))+"\n")
+                    # file.write("\t".join(map(str, table_data))+"\n")
+                    if (inx < len(self.tree.get_children())-1):
+                        row_str = "(\'" + name + "\',\'" + sequence + "\',\'" + description + "\'),\n"
+                        file.write(row_str)
+                        #file.write("(", name, sequence, description, "),\n")
+                    else:
+                        row_str = "(\'" + name + "\',\'" + sequence + "\',\'" + description + "\');"
+                        file.write(row_str)
+                        #file.write("(",name, sequence, description, ");")
                 print(f"File '{file_name}' created successfully")
 
 
