@@ -848,28 +848,29 @@ if __name__ == "__main__":
     ]
 
     # Create a connection to MySQL server
-    connection = create_connection(host_name, user_name, user_password)
-
-    if connection:
-        # Create the database
-        create_database(connection, database_name)
-
-        # Switch to the created database
-        connection.database = database_name
-
-        # Create tables using DDL statements
-        create_tables(connection, ddl_statements)
-
-        # Process data, extract information, and create tab-delimited text files
-        #process_data_and_create_txt_files(connection)
-
-        # Close the database connection
-        connection.close()
+    # connection = create_connection(host_name, user_name, user_password)
+    #
+    # if connection:
+    #     # Create the database
+    #     create_database(connection, database_name)
+    #
+    #     # Switch to the created database
+    #     connection.database = database_name
+    #
+    #     # Create tables using DDL statements
+    #     create_tables(connection, ddl_statements)
+    #
+    #     # Process data, extract information, and create tab-delimited text files
+    #     #process_data_and_create_txt_files(connection)
+    #
+    #     # Close the database connection
+    #     connection.close()
 
 
 # Import text file of sequence input into the table
 # Second, you can issue the following command line described in the file seq.commandline.insert.txt
 # mysqlimport -L -u zigmonsg -p bio466 seq.txt -h bio466-f15.csi.miamioh.edu
+# mysqlimport -L -u zigmonsg -p bio466 seq.txt -h localhost
 # mysqlimport -L -u zigmonsg -p bio466 seq.txt
 # from subprocess import call
 # call('mysqlimport -u zigmonsg -p bio466 seq.txt -h bio466-f15.csi.miamioh.edu', shell=True)
@@ -1065,19 +1066,33 @@ class ModifiedFASTAViewer:
 
         # Get the num. of pressed buttons to find the num. of columns needed
         # in the output table.
-        name, description, sequence, length = self.get_header_sequence()
+        #name, description, sequence, length = self.get_header_sequence()
 
-        data_processing_result = [
-            (14, name, sequence, "read")
-        ]
+        #for selected_item in self.tree:
+        for selected_item in self.tree.get_children():
+            print(selected_item)
 
-        # Create a tab-delimited txt file for each table
-        for table_data in data_processing_result:
-            table_name = "SEQUENCE"
-            file_name = f"{table_name}.txt"
-            with open(file_name, "w") as file:
-                file.write("\t".join(map(str, table_data)))
-            print(f"File '{file_name}' created successfully")
+            header = ">" + self.tree.item(selected_item, "values")[0] + " " + self.tree.item(selected_item, "values")[1]
+            name = self.tree.item(selected_item, "values")[0]
+            description = self.tree.item(selected_item, "values")[1]
+            sequence = self.sequences[header]
+            length = len(sequence)
+
+            print(name)
+
+            data_processing_result = [
+                (name, sequence, description)
+                #(14, name, sequence, description)
+            ]
+            # Create a tab-delimited txt file for each table
+            for table_data in data_processing_result:
+                #table_name = "SEQUENCE"
+                file_name = "seq.txt"
+                #file_name = f"{table_name}.txt"
+                #with open(file_name, "a") as file:
+                with open(file_name, "a") as file:
+                    file.write("\t".join(map(str, table_data))+"\n")
+                print(f"File '{file_name}' created successfully")
 
 
         self.sequence_table_display.delete(1.0, tk.END)
