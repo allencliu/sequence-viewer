@@ -4,10 +4,10 @@ from tkinter import filedialog, Text, Listbox, Scrollbar, Toplevel, Label, Butto
 from collections import OrderedDict
 import os
 from tkinter.ttk import Treeview
-import matplotlib
+#import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import logomaker
+#import logomaker
 import pandas as pd
 import regex
 from NeedlemanWunsch_class_updated import Needleman_Wunsch
@@ -793,6 +793,14 @@ def create_database(connection, db_name):
         print(f"Database '{db_name}' created successfully")
     except Error as e:
         print(f"Error: {e}")
+
+# Actual DDL statements used in this program:
+# CREATE TABLE sequences (
+#     sequence_id INT AUTO_INCREMENT PRIMARY KEY,
+#     seq_name VARCHAR(255),
+#     seq_description TEXT,
+#     sequence VARCHAR(255)
+# );
 
 # Function to execute DDL statements for table creation
 def create_tables(connection, ddl_statements):
