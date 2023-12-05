@@ -780,61 +780,65 @@ class ModifiedFASTAViewer:
         
 
 
-        # Create checkboxes for settings and pack them horizontally
+        # Homopolymer checkbox
         hp_var = tk.IntVar()
-        self.homopolymer = tk.Checkbutton(checkbox_frame, text="Homopolymer", onvalue=1, offvalue=0, variable= hp_var)
-        self.homopolymer.pack(side=tk.LEFT, padx=5)
+        self.homopolymer = tk.Checkbutton(checkbox_frame, text="Homopolymer", onvalue=1, offvalue=0, variable=hp_var)
+        self.homopolymer.grid(row=0, column=0, padx=5)
         self.cbvars["homopolymer"] = hp_var
-    
+
+        # CpG Island checkbox
         cpg_var = tk.IntVar()
         self.cpg_island = tk.Checkbutton(checkbox_frame, text="CpG Island", onvalue=1, offvalue=0, variable=cpg_var)
-        self.cpg_island.pack(side=tk.LEFT, padx=5)
+        self.cpg_island.grid(row=0, column=1, padx=5)
         self.cbvars["cpg"] = cpg_var
 
-        # Change motif so that it takes in text input if checked
-        # May just have a text field and check if it's not empty
+        # Motif Search checkbox
         motif_var = tk.IntVar()
-        self.motif_search = tk.Checkbutton(checkbox_frame, text="Motif Search", onvalue=1, offvalue=0, variable=motif_var)
-        self.motif_search.pack(side=tk.LEFT, padx=5)
+        self.motif_search = tk.Checkbutton(checkbox_frame, text="Motif Search", onvalue=1, offvalue=0, variable=motif_var, command=self.toggle_motif_entry)
+        self.motif_search.grid(row=0, column=2, padx=5)
         self.cbvars["motif"] = motif_var
+        
+        # Entry for motif search
+        self.motif_entry = tk.Entry(checkbox_frame)
+        self.motif_entry.grid(row=0, column=3, padx=5)
+        self.motif_entry.grid_remove()  # Initially hide the entry
 
+        # Codon Profile checkbox
         codon_var = tk.IntVar()
         self.codon_profile = tk.Checkbutton(checkbox_frame, text="Codon Profile", onvalue=1, offvalue=0, variable=codon_var)
-        self.codon_profile.pack(side=tk.LEFT, padx=5)
+        self.codon_profile.grid(row=0, column=4, padx=5)
         self.cbvars["codon"] = codon_var
 
-        # prseq_var = tk.IntVar()
-        # self.printSeqFragment = tk.Checkbutton(checkbox_frame, text="Print Sequence Fragment", onvalue=1, offvalue=0, variable=prseq_var)
-        # self.printSeqFragment.pack(side=tk.LEFT, padx=5)
-        # self.cbvars["printSeqFragment"] = prseq_var
-
+        # Print Targets checkbox
         ptargets_var = tk.IntVar()
         self.printTargets = tk.Checkbutton(checkbox_frame, text="Print Targets", onvalue=1, offvalue=0, variable=ptargets_var)
-        self.printTargets.pack(side=tk.LEFT, padx=5)
+        self.printTargets.grid(row=0, column=5, padx=5)
         self.cbvars["printTargets"] = ptargets_var
 
+        # Alignment checkbox
         pralign_var = tk.IntVar()
-        self.alignment = tk.Checkbutton(checkbox_frame, text="Aligment", onvalue=1, offvalue=0, variable=pralign_var)
-        self.alignment.pack(side=tk.LEFT, padx=5)
+        self.alignment = tk.Checkbutton(checkbox_frame, text="Alignment", onvalue=1, offvalue=0, variable=pralign_var)
+        self.alignment.grid(row=0, column=6, padx=5)
         self.cbvars["process_aligned"] = pralign_var
 
-        # self.process_aligned_seq = tk.Checkbutton(checkbox_frame, text="Process Aligned Sequence", onvalue=1, offvalue=0)
-        # self.process_aligned_seq.pack(side=tk.LEFT, padx=5)
-        
+        # Positional Matrix checkbox
         pos_var = tk.IntVar()
         self.positional_matrix = tk.Checkbutton(checkbox_frame, text="Positional Matrix", onvalue=1, offvalue=0, variable=pos_var)
-        self.positional_matrix.pack(side=tk.LEFT, padx=5)
+        self.positional_matrix.grid(row=0, column=7, padx=5)
         self.cbvars["pos_matrix"] = pos_var
 
+        # Show Positional Matrix checkbox
         showpos_var = tk.IntVar()
         self.show_positional_matrix = tk.Checkbutton(checkbox_frame, text="Show Positional Matrix", onvalue=1, offvalue=0, variable=showpos_var)
-        self.show_positional_matrix.pack(side=tk.LEFT, padx=5)
+        self.show_positional_matrix.grid(row=0, column=8, padx=5)
         self.cbvars["show_pos_matrix"] = showpos_var    
 
+        # Spacer checkbox
         spacer_var = tk.IntVar()
         self.spacer = tk.Checkbutton(checkbox_frame, text="Spacer", onvalue=1, offvalue=0, variable=spacer_var)
-        self.spacer.pack(side=tk.LEFT, padx=5)
+        self.spacer.grid(row=0, column=9, padx=5)
         self.cbvars["spacer"] = spacer_var
+
 
         
         # Update based on the checked boxes
@@ -931,6 +935,13 @@ class ModifiedFASTAViewer:
         # for the selected sequence. After calling those functions, the
         # output is printed to the output table
         
+    def toggle_motif_entry(self):
+        # Toggle the visibility of the motif entry based on the state of the "Motif Search" checkbox
+        if self.cbvars["motif"].get() == 1:
+            self.motif_entry.grid()
+        else:
+            self.motif_entry.grid_remove()
+            
     def get_header_sequence(self):
         selected_item = self.tree.focus()
         if not selected_item:
