@@ -1,15 +1,11 @@
-import re
 import tkinter as tk
 from tkinter import filedialog, Text, Listbox, Scrollbar, Toplevel, Label, Button
 from collections import OrderedDict
 import os
 from tkinter.ttk import Treeview
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import regex
-from NeedlemanWunsch_class_updated import Needleman_Wunsch
-import cgi
 import mysql
 import mysql.connector
 from mysql.connector import Error
