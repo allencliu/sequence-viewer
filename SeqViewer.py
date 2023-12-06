@@ -822,14 +822,10 @@ def codon_profile_print(codon_dict):
     return result
 class ModifiedFASTAViewer:
 
-    def upload_file(self):
-        # Implement the upload_file function logic here
-            return
-
     def upload_to_database(self):
         connection = create_connection(host, user, password, database)
         # Get data to insert into the database
-        name, description, sequence, length = self.get_header_sequence()
+        # name, description, sequence, length = self.get_header_sequence()
 
         # Establish a database connection
         try:
@@ -838,7 +834,17 @@ class ModifiedFASTAViewer:
                 sql = "INSERT INTO SEQUENCE (SEQUENCE_NAME, SEQUENCE_DESCRIPTION, SEQUENCE) VALUES (%s, %s, %s)"
                 
                 # Execute the query
-                cursor.execute(sql, (name, description, sequence))
+                for kvp in self.sequences.items():
+                
+                    headers = kvp[0].split(">")
+                
+                    name = headers[1].split(" ")[0]
+                
+                    description = " ".join(headers[1].split(" ")[1:])
+                    
+                    sequence = kvp[1]
+                    print(name, description, kvp[1])
+                    cursor.execute(sql, (name, description, sequence))
 
             # Commit changes to the database
             connection.commit()
