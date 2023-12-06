@@ -13,6 +13,7 @@ import regex
 from NeedlemanWunsch_class_updated import Needleman_Wunsch
 
 
+
 def is_empty_file(filepath):
     return os.path.getsize(filepath) == 0
 def sort_treeview(tree, col, descending):
@@ -760,7 +761,55 @@ def codon_profile(sequence):
                 codon_dict[codon] = codon_dict[codon] + 1
     return codon_dict
 
+def codon_profile_print(codon_dict):
+    """Print the codon profile based on the provided codon dictionary.
 
+    Args:
+        codon_dict (dict): A dictionary containing codon counts, where the keys
+            are codons (e.g., "TAA", "GCC") and the values are their respective counts.
+    """
+    
+    print("Codon Profile:", end="\n\n")
+    print(f"{'2nd':>20}")
+    print(f"{'-'*35:>43}")
+    print("1st\tT\tC\tA\tG\t3rd")
+    result = f"Codon Profile:\n\n"
+    result += f"{'2nd':>20}\n{'-'*35:>43}\n1st\tT\tC\tA\tG\t3rd\n"
+    # Define the order of bases
+    bases = ["T", "C", "A", "G"]
+
+    # Iterate over the first base
+    for first_base in bases:
+        row = first_base + "\t"
+
+        # Counter to keep track of codons printed in the current line
+        codons_printed = 0
+
+        # Iterate over the second base
+        for second_base in bases:
+            # Iterate over the third base
+            for third_base in bases:
+                codon = first_base + third_base + second_base
+
+                # Check if the codon exists in the dictionary
+                if codon in codon_dict:
+                    count = codon_dict[codon]
+
+                # Append the codon and count to the row
+                row += f"{codon}={count}\t"
+
+                codons_printed += 1
+
+                # Check if we have printed 4 codons, then start a new line
+                if codons_printed == 4:
+                    row += second_base  # Add the second base as 3rd column
+                    print(row)
+                    result += row + "\n"
+                    row = "\t"  # Start a new row
+                    codons_printed = 0
+        print()
+        result += "\n"
+    return result
 class ModifiedFASTAViewer:
 
     def __init__(self, master):
@@ -810,28 +859,28 @@ class ModifiedFASTAViewer:
         self.cbvars["codon"] = codon_var
 
         # Print Targets checkbox
-        ptargets_var = tk.IntVar()
-        self.printTargets = tk.Checkbutton(checkbox_frame, text="Print Targets", onvalue=1, offvalue=0, variable=ptargets_var)
-        self.printTargets.grid(row=0, column=5, padx=5)
-        self.cbvars["printTargets"] = ptargets_var
+        # ptargets_var = tk.IntVar()
+        # self.printTargets = tk.Checkbutton(checkbox_frame, text="Print Targets", onvalue=1, offvalue=0, variable=ptargets_var)
+        # self.printTargets.grid(row=0, column=5, padx=5)
+        # self.cbvars["printTargets"] = ptargets_var
 
         # Alignment checkbox
-        pralign_var = tk.IntVar()
-        self.alignment = tk.Checkbutton(checkbox_frame, text="Alignment", onvalue=1, offvalue=0, variable=pralign_var)
-        self.alignment.grid(row=0, column=6, padx=5)
-        self.cbvars["process_aligned"] = pralign_var
+        # pralign_var = tk.IntVar()
+        # self.alignment = tk.Checkbutton(checkbox_frame, text="Alignment", onvalue=1, offvalue=0, variable=pralign_var)
+        # self.alignment.grid(row=0, column=6, padx=5)
+        # self.cbvars["process_aligned"] = pralign_var
 
         # Positional Matrix checkbox
-        pos_var = tk.IntVar()
-        self.positional_matrix = tk.Checkbutton(checkbox_frame, text="Positional Matrix", onvalue=1, offvalue=0, variable=pos_var)
-        self.positional_matrix.grid(row=0, column=7, padx=5)
-        self.cbvars["pos_matrix"] = pos_var
+        # pos_var = tk.IntVar()
+        # self.positional_matrix = tk.Checkbutton(checkbox_frame, text="Positional Matrix", onvalue=1, offvalue=0, variable=pos_var)
+        # self.positional_matrix.grid(row=0, column=7, padx=5)
+        # self.cbvars["pos_matrix"] = pos_var
 
         # Show Positional Matrix checkbox
-        showpos_var = tk.IntVar()
-        self.show_positional_matrix = tk.Checkbutton(checkbox_frame, text="Show Positional Matrix", onvalue=1, offvalue=0, variable=showpos_var)
-        self.show_positional_matrix.grid(row=0, column=8, padx=5)
-        self.cbvars["show_pos_matrix"] = showpos_var    
+        # showpos_var = tk.IntVar()
+        # self.show_positional_matrix = tk.Checkbutton(checkbox_frame, text="Show Positional Matrix", onvalue=1, offvalue=0, variable=showpos_var)
+        # self.show_positional_matrix.grid(row=0, column=8, padx=5)
+        # self.cbvars["show_pos_matrix"] = showpos_var    
 
         # Spacer checkbox
         spacer_var = tk.IntVar()
@@ -964,6 +1013,7 @@ class ModifiedFASTAViewer:
         # Get the num. of pressed buttons to find the num. of columns needed
         # in the output table.
         name, description, sequence, length = self.get_header_sequence()
+        codon_result = ""
         self.sequence_table_display.delete(1.0, tk.END)
         for key in self.cbvars.keys():
             if self.cbvars[key].get() == 1:
@@ -989,9 +1039,27 @@ class ModifiedFASTAViewer:
                     self.sequence_table_display.insert(tk.END, sequence)
 
                 if key == "motif":
-                    return
+                    target = self.motif_entry.get().upper()
+                    if target != "":
+                        motifs = motif_search(sequence, target)
+                        modified_sequence = list(sequence)  # Convert the sequence to a list of characters for easy modification
+
+                        if motifs is not None:
+                            for motif_info in motifs:
+                                start_end, length = motif_info.split('_')
+                                start, end = map(int, start_end.split('-'))
+
+                                for i in range(start, end + 1):
+                                    modified_sequence[i] = sequence[i].lower()
+                        sequence = ''.join(modified_sequence)  # Convert the modified list back to a string
+                    self.sequence_table_display.delete(1.0, tk.END)
+                    self.sequence_table_display.insert(tk.END, sequence)
                 if key == "codon":
-                    return
+                    codon_dict = codon_profile(sequence)
+                    codon_result = codon_profile_print(codon_dict)
+                    self.sequence_table_display.delete(1.0, tk.END)
+                    self.sequence_table_display.insert(tk.END, sequence)
+                    self.sequence_table_display.insert(tk.END, codon_result)
                 if key == "printTargets":
                     return
                 if key == "process_aligned":
@@ -1004,12 +1072,11 @@ class ModifiedFASTAViewer:
                     # print(sequence)
                     sequence = print_with_ruler(name, description, sequence, 100, True)
                     self.sequence_table_display.delete(1.0, tk.END)
-                    self.sequence_table_display.insert(tk.END, sequence + "\n")
+                    self.sequence_table_display.insert(tk.END, sequence + f"\n\n{codon_result}")
                     # print()
                 else:
                     self.sequence_table_display.delete(1.0, tk.END)
-                    self.sequence_table_display.insert(tk.END, print_with_ruler(name, description, sequence, 100, False))
-                    
+                    self.sequence_table_display.insert(tk.END, print_with_ruler(name, description, sequence, 100, False) + f"\n\n{codon_result}")
 
         
         # print("Button Pressed")
@@ -1092,7 +1159,6 @@ class ModifiedFASTAViewer:
 # Modifying the ModifiedFASTAViewer class to display long sequences in a new window
 
 class UpdatedFASTAViewer(ModifiedFASTAViewer):
-
     def show_sequence(self, sequence):
         selected = self.listbox.curselection()
         if not selected:
@@ -1149,7 +1215,6 @@ class UpdatedFASTAViewer(ModifiedFASTAViewer):
         return
             
 
-# Display GUI
 root = tk.Tk()
 app = UpdatedFASTAViewer(root)
 root.mainloop()
