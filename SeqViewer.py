@@ -13,6 +13,7 @@ import regex
 from NeedlemanWunsch_class_updated import Needleman_Wunsch
 import cgi
 import mysql
+import mysql.connector
 from mysql.connector import Error
 
 
@@ -1268,18 +1269,20 @@ class UpdatedFASTAViewer(ModifiedFASTAViewer):
         return
     
 # Function to create a MySQL database connection
-def create_connection(host, user, password):
-    connection = None
+def create_connection(host, user, password, database):
     try:
         connection = mysql.connector.connect(
             host=host,
             user=user,
-            password=password
+            password=password,
+            database=database
         )
-        print("Connected to MySQL Server")
-    except Error as e:
-        print(f"Error: {e}")
-    return connection
+
+        if connection.is_connected():
+            print("Connected to MySQL Server")
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
 
 # Function to create a new database
 def create_database(connection, db_name):
@@ -1325,10 +1328,11 @@ if __name__ == "__main__":
     # Replace with your own database and user credentials
     # Remote hostname/IP address
     #host_name = "bio466-f15.csi.miamioh.edu"
-    host_name = "localhost"
-    user_name = "zigmonsg@localhost"
-    user_password = "bio466"
-    database_name = "zigmonsg"
+    host = "localhost"
+    user = "root"
+    password = "&%Bn96=mdQe4"
+    database = "liuac"
+
 
     # DDL statements for table creation
     ddl_statements = [
@@ -1344,7 +1348,7 @@ if __name__ == "__main__":
     ]
 
     # Create a connection to MySQL server
-    # connection = create_connection(host_name, user_name, user_password)
+    create_connection(host, user, password, database)
     #
     # if connection:
     #     # Create the database
