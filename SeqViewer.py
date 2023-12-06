@@ -815,13 +815,37 @@ def codon_profile_print(codon_dict):
     return result
 class ModifiedFASTAViewer:
 
+    def upload_file(self):
+        # Implement the upload_file function logic here
+            return
+
+    def upload_to_database(self):
+        # Implement the upload_to_database function logic here
+        return
+
+    def download_from_database(self):
+        # Implement the download_from_database function logic here
+        return
+        
     def __init__(self, master):
         self.master = master
         self.master.title("FASTA Viewer")
         
+        # Create a frame to hold the buttons
+        self.button_frame = tk.Frame(self.master)
+        self.button_frame.pack(pady=10)
+
         # Create a button to upload the FASTA file
-        self.upload_button = Button(self.master, text="Upload FASTA", command=self.upload_file)
-        self.upload_button.pack(pady=10)
+        self.upload_button = Button(self.button_frame, text="Upload FASTA", command=self.upload_file)
+        self.upload_button.pack(side="left", padx=5)
+
+        # Create a button to upload to the database
+        self.upload_to_database_button = Button(self.button_frame, text="Upload to Database", command=self.upload_to_database)
+        self.upload_to_database_button.pack(side="left", padx=5)
+
+        # Create a button to download from the database
+        self.download_from_database_button = Button(self.button_frame, text="Download from Database", command=self.download_from_database)
+        self.download_from_database_button.pack(side="left", padx=5)
         
         # List containing checkboxes
         self.cbvars = {}
@@ -1006,13 +1030,7 @@ class ModifiedFASTAViewer:
 
         return name, description, sequence, length
     
-    def button_pressed(self):
-        # Function for when our update button is pressed.
-        # Once self.update_button has been clicked, we need to see what
-        # checkboxes were checked and call the corresponding functions
-        # for the selected sequence. After calling those functions, the
-        # output is printed to the output table
-
+    def dump_data(self):
         # Get the num. of pressed buttons to find the num. of columns needed
         # in the output table.
         for selected_item in self.tree.get_children():
@@ -1039,8 +1057,17 @@ class ModifiedFASTAViewer:
                 with open(file_name, "a") as file:
                     file.write("\t".join(map(str, table_data))+"\n")
                 print(f"File '{file_name}' created successfully")
+                
+
+    def button_pressed(self):
+        # Function for when our update button is pressed.
+        # Once self.update_button has been clicked, we need to see what
+        # checkboxes were checked and call the corresponding functions
+        # for the selected sequence. After calling those functions, the
+        # output is printed to the output table
         name, description, sequence, length = self.get_header_sequence()
         self.sequence_table_display.delete(1.0, tk.END)
+        codon_result = ""
         for key in self.cbvars.keys():
             if self.cbvars[key].get() == 1:
                 if key == "homopolymer":
