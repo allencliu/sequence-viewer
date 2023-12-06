@@ -1321,8 +1321,13 @@ class UpdatedFASTAViewer(ModifiedFASTAViewer):
         sequence_display.insert(tk.END, sequence)
 
     def clear_widget(self):
-        self.listbox.selection_clear(0, tk.END)
+        self.listbox.delete(0, tk.END)
         self.sequence_display.delete(1.0, tk.END)
+        # Clear the Treeview
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        self.sequence_table_display.delete(1.0, tk.END)
+        self.sequences.clear()
         
         # Show sequence based on selected header in table
     def show_table_sequence(self, sequence):
