@@ -7,14 +7,20 @@ from tkinter.ttk import Treeview
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import logomaker
-import pandas as pd
 import regex
 from NeedlemanWunsch_class_updated import Needleman_Wunsch
 import cgi
 import mysql
 import mysql.connector
 from mysql.connector import Error
+import tkinter.messagebox as messagebox
+
+
+
+host = "localhost"
+user = "root"
+password = "&%Bn96=mdQe4"
+database = "liuac"
 
 
 
@@ -821,11 +827,77 @@ class ModifiedFASTAViewer:
             return
 
     def upload_to_database(self):
-        # Implement the upload_to_database function logic here
-        return
+        connection = create_connection(host, user, password, database)
+        # Get data to insert into the database
+        name, description, sequence, length = self.get_header_sequence()
+
+        # Establish a database connection
+        try:
+            with connection.cursor() as cursor:
+                # SQL query to insert data into the SEQUENCE table
+                sql = "INSERT INTO SEQUENCE (SEQUENCE_NAME, SEQUENCE_DESCRIPTION, SEQUENCE) VALUES (%s, %s, %s)"
+                
+                # Execute the query
+                cursor.execute(sql, (name, description, sequence))
+
+            # Commit changes to the database
+            connection.commit()
+
+            # Show a success message box in the GUI
+            success_message = "Data uploaded successfully!"
+            messagebox.showinfo("Success", success_message)
+            
+        except Exception as e:
+            print(f"Error: {e}")
+
+        finally:
+            # Close the database connection
+            connection.close()
 
     def download_from_database(self):
-        # Implement the download_from_database function logic here
+        # Clear previous items in the Treeview
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        # Establish a database connection
+        connection = create_connection(host, user, password, database)
+        
+        try:
+            with connection.cursor() as cursor:
+                # SQL query to retrieve data from the SEQUENCE table
+                sql = "SELECT SEQUENCE_NAME, SEQUENCE_DESCRIPTION, SEQUENCE FROM SEQUENCE"
+                
+                # Execute the query
+                cursor.execute(sql)
+                
+                # Fetch all the results
+                results = cursor.fetchall()
+
+                # Populate the Treeview with sequence information
+                for row in results:
+                    name = row[0]
+                    description = row[1]
+                    sequence = row[2]
+                    length = len(sequence)
+                    a_count = sequence.count('A')
+                    t_count = sequence.count('T')
+                    g_count = sequence.count('G')
+                    c_count = sequence.count('C')
+                    gc_content = (g_count + c_count) / length * 100 if length > 0 else 0
+
+                    self.tree.insert("", "end", values=(name, description, length, a_count, t_count, g_count, c_count, f"{gc_content:.2f}%"))
+                    
+                    # Update the sequences dictionary
+                    header = f">{name} {description}"
+                    self.sequences[header] = sequence
+
+        except Exception as e:
+            print(f"Error: {e}")
+
+        finally:
+            # Close the database connection
+            connection.close()
+
         return
         
     def __init__(self, master):
@@ -1058,8 +1130,7 @@ class ModifiedFASTAViewer:
                 with open(file_name, "a") as file:
                     file.write("\t".join(map(str, table_data))+"\n")
                 print(f"File '{file_name}' created successfully")
-                
-
+            
     def button_pressed(self):
         # Function for when our update button is pressed.
         # Once self.update_button has been clicked, we need to see what
@@ -1270,6 +1341,7 @@ class UpdatedFASTAViewer(ModifiedFASTAViewer):
     
 # Function to create a MySQL database connection
 def create_connection(host, user, password, database):
+    connection = None
     try:
         connection = mysql.connector.connect(
             host=host,
@@ -1280,10 +1352,10 @@ def create_connection(host, user, password, database):
 
         if connection.is_connected():
             print("Connected to MySQL Server")
+            return connection
 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
-
 # Function to create a new database
 def create_database(connection, db_name):
     try:
@@ -1328,10 +1400,6 @@ if __name__ == "__main__":
     # Replace with your own database and user credentials
     # Remote hostname/IP address
     #host_name = "bio466-f15.csi.miamioh.edu"
-    host = "localhost"
-    user = "root"
-    password = "&%Bn96=mdQe4"
-    database = "liuac"
 
 
     # DDL statements for table creation
@@ -1340,31 +1408,31 @@ if __name__ == "__main__":
         CREATE TABLE IF NOT EXISTS SEQUENCE (
             SEQUENCE_ID INT AUTO_INCREMENT PRIMARY KEY,
             SEQUENCE_NAME VARCHAR(255),
-            SEQUENCE VARCHAR(255),
-            SEQUENCE_TYPE VARCHAR(255)
+            SEQUENCE_DESCRIPTION VARCHAR(255),
+            SEQUENCE TEXT
         )
         """
         # Add more DDL statements for additional tables if needed
     ]
 
     # Create a connection to MySQL server
-    create_connection(host, user, password, database)
+    connection = create_connection(host, user, password, database)
     #
-    # if connection:
-    #     # Create the database
-    #     create_database(connection, database_name)
-    #
-    #     # Switch to the created database
-    #     connection.database = database_name
-    #
-    #     # Create tables using DDL statements
-    #     create_tables(connection, ddl_statements)
-    #
-    #     # Process data, extract information, and create tab-delimited text files
-    #     #process_data_and_create_txt_files(connection)
-    #
-    #     # Close the database connection
-    #     connection.close()
+    if connection:
+        # Create the database
+        create_database(connection, database)
+    
+        # Switch to the created database
+        connection.database = database
+    
+        # Create tables using DDL statements
+        create_tables(connection, ddl_statements)
+    
+        # Process data, extract information, and create tab-delimited text files
+        #process_data_and_create_txt_files(connection)
+    
+        # Close the database connection
+        connection.close()
 
 
 # Import text file of sequence input into the table
