@@ -11,6 +11,49 @@ Before running the program, make sure you have the following prerequisites insta
 
 Additionally, you need access to a MySQL database and have the necessary credentials (host, user, password, and database name) to establish a connection. In the case of this program, the developers created a separate database server specifically for the project. You can modify the host, user, password, and database name in the ```SeqViewer.py``` file to your own database.
 
+## Setting Up MySQL Database and Workbench
+
+### 1. Download MySQL Workbench
+
+Download and install MySQL Workbench, a visual tool for database design, SQL development, and administration.
+
+- **Download Link:** [MySQL Workbench](https://dev.mysql.com/downloads/workbench/)
+
+### 2. Install MySQL Workbench
+
+Follow the installation instructions provided for your operating system on the download page.
+
+### 3. Download MySQL Server
+
+Download MySQL Server, the relational database management system.
+
+- **Download Link:** [MySQL Server](https://dev.mysql.com/downloads/mysql/)
+
+### 4. Install MySQL Server
+
+Follow the installation instructions for MySQL Server based on your operating system. During the installation, you will be prompted to set a root password for the MySQL Server. Make sure to remember this password.
+
+### 5. Configure MySQL Server
+
+Once the installation is complete, open MySQL Workbench.
+
+- Connect to the MySQL Server using the root username and the password you set during installation.
+
+### 6. Create a Database for Sequence Viewer
+
+In MySQL Workbench:
+
+- In the Navigator, go to the "Schema" tab.
+- Right-click and choose "Create Schema" to create a new database for the Sequence Viewer project.
+
+### 7. Configure Database Connection in SeqViewer.py
+
+- Change the global variables:
+   - ```host = "localhost"```
+   - ```user = "root"```
+   - ```password = password```
+   - ```database = database/schema```
+
 ## Program Functionality
 
 The program provides the following functionalities:
