@@ -119,6 +119,7 @@ def print_with_ruler(seq_name, description, sequence, NucleotidesPerLine, spacer
             # print(f"{i // NucleotidesPerLine + 1 :> 4}", chunk_with_spaces)
             result += f"\n{i // NucleotidesPerLine + 1: >4} {chunk_with_spaces}"
     return result
+
 def detect_homopolymer(sequence):
     """Detect homopolymer sequences in a DNA sequence.
 
@@ -291,6 +292,7 @@ def codon_profile_print(codon_dict):
                     codons_printed = 0
         result += "\n"
     return result
+
 class ModifiedFASTAViewer:
 
     def upload_to_database(self):
