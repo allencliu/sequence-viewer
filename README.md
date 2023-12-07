@@ -7,10 +7,7 @@ This Python program is a graphical user interface (GUI) application built using 
 Before running the program, make sure you have the following prerequisites installed:
 
 - Python (version 3.x)
-- Pandas (including NumPy and other dependencies, install using `pip install pandas`)
-- Tkinter
-- MySQL Connector (install using `pip install mysql-connector-python` or `pip install mysql.connector`)
-- Matplotlib (install using `pip install matplotlib`)
+- Run the command ```pip install -r requirements.txt```
 
 Additionally, you need access to a MySQL database and have the necessary credentials (host, user, password, and database name) to establish a connection. In the case of this program, the developers created a separate database server specifically for the project.
 
