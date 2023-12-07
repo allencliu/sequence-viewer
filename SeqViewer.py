@@ -486,7 +486,7 @@ class ModifiedFASTAViewer:
 
         # Create a button to make DDL file
         self.ddl_button = Button(self.button_frame, text="Create DDL File",
-                                                command=self.dump_data())
+                                                command=self.dump_data)
         self.ddl_button.pack(side="left", padx=5)
 
         # Create a button to upload to the database
@@ -630,6 +630,8 @@ class ModifiedFASTAViewer:
         # checkboxes were checked and call the corresponding functions
         # for the selected sequence. After calling those functions, the
         # output is printed to the output table
+
+        print(self.tree.get_children())
         
     def toggle_motif_entry(self):
         """
@@ -683,7 +685,7 @@ class ModifiedFASTAViewer:
         length = len(sequence)
 
         return name, description, sequence, length
-    
+
     def dump_data(self):
         """
         Dump sequence data to tab-delimited text files. These text files contain SQL commands
@@ -706,7 +708,11 @@ class ModifiedFASTAViewer:
         """
         # Get the num. of pressed buttons to find the num. of columns needed
         # in the output table.
-        for selected_item in self.sequences:
+        # Clear the DDL file each time the button is pressed
+        with open("seq.txt", "w") as output:
+            output.write("")
+
+        for selected_item in self.tree.get_children():
             print(selected_item)
 
             header = ">" + self.tree.item(selected_item, "values")[0] + " " + self.tree.item(selected_item, "values")[1]
