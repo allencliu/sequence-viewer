@@ -4,9 +4,9 @@ from collections import OrderedDict
 import os
 from tkinter.ttk import Treeview
 import regex
-import mysql
-import mysql.connector
-from mysql.connector import Error
+# import mysql
+# import mysql.connector
+# from mysql.connector import Error
 import tkinter.messagebox as messagebox
 
 
@@ -482,13 +482,18 @@ class ModifiedFASTAViewer:
         self.upload_button = Button(self.button_frame, text="Upload FASTA", command=self.upload_file)
         self.upload_button.pack(side="left", padx=5)
 
+        # Create a button to make DDL file
+        # self.ddl_button = Button(self.button_frame, text="Create DDL File",
+        #                                         command=self.dump_data())
+        # self.ddl_button.pack(side="left", padx=5)
+
         # Create a button to upload to the database
-        self.upload_to_database_button = Button(self.button_frame, text="Upload to Database", command=self.upload_to_database)
-        self.upload_to_database_button.pack(side="left", padx=5)
+        # self.upload_to_database_button = Button(self.button_frame, text="Upload to Database", command=self.upload_to_database)
+        # self.upload_to_database_button.pack(side="left", padx=5)
 
         # Create a button to download from the database
-        self.download_from_database_button = Button(self.button_frame, text="Download from Database", command=self.download_from_database)
-        self.download_from_database_button.pack(side="left", padx=5)
+        # self.download_from_database_button = Button(self.button_frame, text="Download from Database", command=self.download_from_database)
+        # self.download_from_database_button.pack(side="left", padx=5)
         
         # List containing checkboxes
         self.cbvars = {}
@@ -679,24 +684,24 @@ class ModifiedFASTAViewer:
     
     def dump_data(self):
         """
-            Dump sequence data to tab-delimited text files. These text files contain SQL commands
-            that can be imported to a database server with mysqlimport command or copied into the
-            SQL query prompt of the server.
+        Dump sequence data to tab-delimited text files. These text files contain SQL commands
+        that can be imported to a database server with mysqlimport command or copied into the
+        SQL query prompt of the server.
 
-            For each selected sequence in the Treeview, extracts the name, description, and
-            sequence information. Creates a tab-delimited text file containing the data
-            for each sequence. The files are named 'seq.txt' and are appended with each call.
+        For each selected sequence in the Treeview, extracts the name, description, and
+        sequence information. Creates a tab-delimited text file containing the data
+        for each sequence. The files are named 'seq.txt' and are appended with each call.
 
-            Args:
-                None
+        Args:
+            None
 
-            Returns:
-                None
+        Returns:
+            None
 
-            Example:
-                # Assuming 'instance' is an object of the class containing this method
-                instance.dump_data()
-            """
+        Example:
+            # Assuming 'instance' is an object of the class containing this method
+            instance.dump_data()
+        """
         # Get the num. of pressed buttons to find the num. of columns needed
         # in the output table.
         for selected_item in self.tree.get_children():
@@ -1204,23 +1209,23 @@ if __name__ == "__main__":
     ]
 
     # Create a connection to MySQL server
-    connection = create_connection(host, user, password, database)
+    # connection = create_connection(host, user, password, database)
+    # #
+    # if connection:
+    #     # Create the database
+    #     create_database(connection, database)
     #
-    if connection:
-        # Create the database
-        create_database(connection, database)
-    
-        # Switch to the created database
-        connection.database = database
-    
-        # Create tables using DDL statements
-        create_tables(connection, ddl_statements)
-    
-        # Process data, extract information, and create tab-delimited text files
-        #process_data_and_create_txt_files(connection)
-    
-        # Close the database connection
-        connection.close()
+    #     # Switch to the created database
+    #     connection.database = database
+    #
+    #     # Create tables using DDL statements
+    #     create_tables(connection, ddl_statements)
+    #
+    #     # Process data, extract information, and create tab-delimited text files
+    #     #process_data_and_create_txt_files(connection)
+    #
+    #     # Close the database connection
+    #     connection.close()
 
 
 # Import text file of sequence input into the table
