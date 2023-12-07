@@ -1,92 +1,54 @@
-# BIO466_FinalProject
+# Sequence Viewer
 
+This Python program is a graphical user interface (GUI) application built using the Tkinter library. It allows users to upload, view, and analyze DNA sequences stored in FASTA format. The program includes functionalities such as uploading sequences from files, uploading sequences to a MySQL database, downloading sequences from the database, and performing various sequence analyses.
 
+## Prerequisites
 
-## Getting started
+Before running the program, make sure you have the following prerequisites installed:
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- Python (version 3.x)
+- Pandas (including NumPy and other dependencies, install using `pip install pandas`)
+- Tkinter
+- MySQL Connector (install using `pip install mysql-connector-python` or `pip install mysql.connector`)
+- Matplotlib (install using `pip install matplotlib`)
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Additionally, you need access to a MySQL database and have the necessary credentials (host, user, password, and database name) to establish a connection. In the case of this program, the developers created a separate database server specifically for the project.
 
-## Add your files
+## Program Functionality
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+The program provides the following functionalities:
 
-```
-cd existing_repo
-git remote add origin https://gitlab.csi.miamioh.edu/liuac/bio466_finalproject.git
-git branch -M main
-git push -uf origin main
-```
+1. **Upload FASTA File**
+   - Click the "Upload FASTA" button to select a FASTA file from your system. The sequences in the file will be displayed in the listbox. Large files will be processed in a separate window.
 
-## Integrate with your tools
+2. **Upload to Database**
+   - Click the "Upload to Database" button to upload the selected sequence to a MySQL database. Provide the required database connection details (host, user, password, and database) at the beginning of the script.
 
-- [ ] [Set up project integrations](https://gitlab.csi.miamioh.edu/liuac/bio466_finalproject/-/settings/integrations)
+3. **Download from Database**
+   - Click the "Download from Database" button to retrieve sequences from the MySQL database and display them in a Treeview. The Treeview provides information such as sequence name, description, length, nucleotide counts, and GC content.
 
-## Collaborate with your team
+4. **Sequence Analysis**
+   - **Homopolymer:** Check the "Homopolymer" checkbox to highlight homopolymer regions in the displayed sequence.
+   - **CpG Island:** Check the "CpG Island" checkbox to highlight CpG islands in the displayed sequence.
+   - **Motif Search:** Check the "Motif Search" checkbox to search for a specific motif in the sequence. Enter the motif in the provided entry field.
+   - **Codon Profile:** Check the "Codon Profile" checkbox to display the codon profile of the sequence.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+5. **Display Options**
+   - Use the listbox to select a sequence header for detailed viewing.
+   - Clear selections and displayed sequences using the "Clear" button.
 
-## Test and Deploy
+6. **Additional Features**
+   - **Detailed Sequence View:** For sequences exceeding 5000 characters, a detailed sequence view is provided in a new window.
+   - **Table Sorting:** Click on column headers in the Treeview to sort the displayed sequences based on the selected column.
 
-Use the built-in continuous integration in GitLab.
+## Running the Program
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+1. Ensure that the prerequisites are installed.
+2. Update the database connection details (host, user, password, and database) at the beginning of the script.
+3. Execute the script in a Python environment.
 
-***
+## Notes
 
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- **MySQL Connection:** The program assumes that a MySQL server is accessible, and the specified database exists. Adjust the connection details accordingly.
+- **Large Files:** Large FASTA files are processed in a separate window due to potential performance issues.
+- **Sequence Analysis:** The program provides basic sequence analysis functionalities. Extend the code for more advanced analyses as needed.
