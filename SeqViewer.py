@@ -19,8 +19,33 @@ database = "liuac"
 
 
 def is_empty_file(filepath):
+    """
+    Check if a file is empty.
+    Args:
+        filepath (str): The path to the file to be checked.
+    Returns:
+        bool: True if the file is empty, False otherwise.
+    """
     return os.path.getsize(filepath) == 0
 def sort_treeview(tree, col, descending):
+    """
+    Sort a Tkinter Treeview widget based on the specified column.
+
+    Args:
+        tree (ttk.Treeview): The Tkinter Treeview widget to be sorted.
+        col (str): The column name by which the Treeview should be sorted.
+        descending (bool): If True, sort in descending order; if False, sort in ascending order.
+
+    Returns:
+        None
+
+    Note:
+        This function modifies the order of items in the provided Treeview widget.
+
+    Example:
+        To sort a Treeview named 'my_treeview' by the 'GC Content' column in descending order:
+        sort_treeview(my_treeview, 'GC Content', True)
+    """
     if col == "GC Content":
         data = [(float(tree.set(item, col).rstrip("%")), item) for item in tree.get_children('')]
     else:
@@ -294,6 +319,30 @@ def codon_profile_print(codon_dict):
 class ModifiedFASTAViewer:
 
     def upload_to_database(self):
+        """
+        Upload sequence data to a database.
+
+        Establishes a connection to the database using the provided credentials,
+        retrieves sequence data from the internal data structure (self.sequences),
+        and inserts the data into the SEQUENCE table.
+
+        Raises:
+            Any exceptions that occur during the database operations.
+
+        Returns:
+            None
+
+        Note:
+            - This method assumes a certain database schema with a SEQUENCE table.
+            - The connection details (host, user, password, database) should be set
+              before calling this method.
+            - The sequence data is retrieved from the internal 'sequences' dictionary
+              and uploaded to the database.
+
+        Example:
+            instance = YourClass()
+            instance.upload_to_database()
+        """
         connection = create_connection(host, user, password, database)
         # Get data to insert into the database
         # name, description, sequence, length = self.get_header_sequence()
@@ -332,6 +381,30 @@ class ModifiedFASTAViewer:
             connection.close()
 
     def download_from_database(self):
+        """
+        Download sequence data from the database and populate a Treeview.
+
+        Clears the previous items in the associated Treeview, establishes a connection
+        to the database using the provided credentials, retrieves data from the SEQUENCE
+        table, and populates the Treeview with sequence information.
+
+        Raises:
+            Any exceptions that occur during the database operations.
+
+        Returns:
+            None
+
+        Note:
+            - This method assumes a certain database schema with a SEQUENCE table.
+            - The connection details (host, user, password, database) should be set
+              before calling this method.
+            - The sequence data is fetched from the database and displayed in the Treeview.
+            - The internal 'sequences' dictionary is updated with the downloaded data.
+
+        Example:
+            instance = YourClass()
+            instance.download_from_database()
+        """
         # Clear previous items in the Treeview
         for item in self.tree.get_children():
             self.tree.delete(item)
@@ -378,6 +451,26 @@ class ModifiedFASTAViewer:
         return
         
     def __init__(self, master):
+        """
+        Initialize the FASTA Viewer application.
+
+        Args:
+            master (tk.Tk): The Tkinter root window.
+
+        Returns:
+            None
+
+        Note:
+            - Creates and configures the main application window with buttons,
+              checkboxes, listboxes, text widgets, and other graphical elements.
+            - Sets up event bindings and callbacks for various user interactions.
+            - Manages the display and manipulation of sequence data in the GUI.
+
+        Example:
+            root = tk.Tk()
+            app = YourClass(root)
+            root.mainloop()
+        """
         self.master = master
         self.master.title("FASTA Viewer")
         
@@ -532,13 +625,47 @@ class ModifiedFASTAViewer:
         # output is printed to the output table
         
     def toggle_motif_entry(self):
-        # Toggle the visibility of the motif entry based on the state of the "Motif Search" checkbox
+        """
+        Toggle the visibility of the motif entry based on the state of the "Motif Search" checkbox.
+
+        If the "Motif Search" checkbox is checked, the motif entry widget is made visible;
+        otherwise, it is hidden.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Example:
+            # Assuming 'instance' is an object of the class containing this method
+            instance.toggle_motif_entry()
+        """
+        # Identify the state of the "Motif Search" checkbox
         if self.cbvars["motif"].get() == 1:
             self.motif_entry.grid()
         else:
             self.motif_entry.grid_remove()
             
     def get_header_sequence(self):
+        """
+        Retrieve sequence information for the currently selected item in the Treeview.
+
+        Gets the header, name, description, sequence, and length for the sequence
+        currently selected in the Treeview. The information is extracted from the
+        associated 'sequences' dictionary.
+
+        Args:
+            None
+
+        Returns:
+            tuple: A tuple containing the name, description, sequence, and length
+                   of the selected sequence.
+
+        Example:
+            # Assuming 'instance' is an object of the class containing this method
+            sequence_info = instance.get_header_sequence()
+        """
         selected_item = self.tree.focus()
         if not selected_item:
             return
@@ -551,6 +678,25 @@ class ModifiedFASTAViewer:
         return name, description, sequence, length
     
     def dump_data(self):
+        """
+            Dump sequence data to tab-delimited text files. These text files contain SQL commands
+            that can be imported to a database server with mysqlimport command or copied into the
+            SQL query prompt of the server.
+
+            For each selected sequence in the Treeview, extracts the name, description, and
+            sequence information. Creates a tab-delimited text file containing the data
+            for each sequence. The files are named 'seq.txt' and are appended with each call.
+
+            Args:
+                None
+
+            Returns:
+                None
+
+            Example:
+                # Assuming 'instance' is an object of the class containing this method
+                instance.dump_data()
+            """
         # Get the num. of pressed buttons to find the num. of columns needed
         # in the output table.
         for selected_item in self.tree.get_children():
@@ -579,11 +725,25 @@ class ModifiedFASTAViewer:
                 print(f"File '{file_name}' created successfully")
             
     def button_pressed(self):
-        # Function for when our update button is pressed.
-        # Once self.update_button has been clicked, we need to see what
-        # checkboxes were checked and call the corresponding functions
-        # for the selected sequence. After calling those functions, the
-        # output is printed to the output table
+        """
+        Process button click events and update the sequence display.
+
+        This method is called when the "Update" button is pressed. It retrieves the selected
+        sequence's information from the Treeview, and based on the checked checkboxes, it
+        performs various sequence processing tasks such as homopolymer detection, CpG island
+        identification, motif search, codon profiling, and more. The results are displayed
+        in the output table.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Example:
+            # Assuming 'instance' is an object of the class containing this method
+            instance.button_pressed()
+        """
         name, description, sequence, length = self.get_header_sequence()
         self.sequence_table_display.delete(1.0, tk.END)
         codon_result = ""
@@ -654,6 +814,24 @@ class ModifiedFASTAViewer:
         # print("Button Pressed")
 
     def upload_file(self):
+        """
+        Upload and process a FASTA file.
+
+        Opens a file dialog to allow the user to select a FASTA file. If the selected file
+        is not empty, reads its content, extracts header and sequence information, and
+        populates the 'sequences' dictionary. Displays the headers in a listbox and updates
+        the Treeview for tabular display. Also, updates the sequence count label.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Example:
+            # Assuming 'instance' is an object of the class containing this method
+            instance.upload_file()
+        """
         # Open a file dialog to select the FASTA file
         fasta_file = filedialog.askopenfilename(title="Select a FASTA file",
                                                 filetypes=[("FASTA files", "*.fasta"), ("All files", "*.*")])
@@ -708,6 +886,23 @@ class ModifiedFASTAViewer:
         self.sequence_count_label.config(text=f"Total Sequences: {len(self.sequences)}")
               
     def update_treeview(self):
+        """
+        Update the Treeview with sequence information.
+
+        Clears the previous items in the Treeview and populates it with sequence information
+        from the 'sequences' dictionary. Each sequence is represented as a row in the Treeview
+        with columns for Name, Description, Length, A Count, T Count, G Count, C Count, and GC Content.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Example:
+            # Assuming 'instance' is an object of the class containing this method
+            instance.update_treeview()
+        """
         # Clear previous items in the Treeview
         for item in self.tree.get_children():
             self.tree.delete(item)
@@ -726,10 +921,30 @@ class ModifiedFASTAViewer:
             gc_content = (g_count + c_count) / length * 100 if length > 0 else 0
 
             self.tree.insert("", "end", values=(name, description, length, a_count, t_count, g_count, c_count, f"{gc_content:.2f}%"))
+
+
 # Modifying the ModifiedFASTAViewer class to display long sequences in a new window
 
 class UpdatedFASTAViewer(ModifiedFASTAViewer):
     def show_sequence(self, sequence):
+        """
+        Display the selected sequence in the GUI.
+
+        Retrieves the selected sequence's header from the listbox, then fetches the corresponding
+        sequence from the 'sequences' dictionary. If the length of the sequence exceeds 5000 characters,
+        it opens the sequence in a new window using the 'show_in_new_window' method; otherwise, it displays
+        the sequence in the Text widget of the main GUI.
+
+        Args:
+            sequence (str): The sequence to display.
+
+        Returns:
+            None
+
+        Example:
+            # Assuming 'instance' is an object of the class containing this method
+            instance.show_sequence("ATCG...")
+        """
         selected = self.listbox.curselection()
         if not selected:
             return
@@ -744,6 +959,23 @@ class UpdatedFASTAViewer(ModifiedFASTAViewer):
             self.sequence_display.insert(tk.END, sequence)
 
     def show_in_new_window(self, sequence):
+        """
+        Display a detailed view of a sequence in a new window.
+
+        Opens a new window with a title "Detailed Sequence View" and displays the given sequence
+        in a Text widget with increased dimensions. Horizontal and vertical scrollbars are provided
+        for navigation.
+
+        Args:
+            sequence (str): The sequence to display.
+
+        Returns:
+            None
+
+        Example:
+            # Assuming 'instance' is an object of the class containing this method
+            instance.show_in_new_window("ATCG...")
+        """
         new_window = Toplevel(self.master)
         new_window.title("Detailed Sequence View")
 
@@ -760,6 +992,22 @@ class UpdatedFASTAViewer(ModifiedFASTAViewer):
         sequence_display.insert(tk.END, sequence)
 
     def clear_widget(self):
+        """
+        Clear all displayed information and reset the widget.
+
+        Clears the contents of the listbox, the main sequence display, the Treeview, and the sequence table display.
+        Additionally, clears the 'sequences' dictionary.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Example:
+            # Assuming 'instance' is an object of the class containing this method
+            instance.clear_widget()
+        """
         self.listbox.delete(0, tk.END)
         self.sequence_display.delete(1.0, tk.END)
         # Clear the Treeview
@@ -768,9 +1016,27 @@ class UpdatedFASTAViewer(ModifiedFASTAViewer):
         self.sequence_table_display.delete(1.0, tk.END)
         self.sequences.clear()
         
-        # Show sequence based on selected header in table
-    
+
     def show_table_sequence(self, sequence):
+        """
+        Display the selected sequence from the table in the GUI.
+
+        Retrieves the selected sequence's header from the Treeview, then fetches the corresponding
+        sequence from the 'sequences' dictionary. If the length of the sequence exceeds 5000 characters,
+        it opens the sequence in a new window using the 'show_in_new_window' method; otherwise, it displays
+        the sequence in the Text widget of the main GUI.
+
+        Args:
+            sequence (str): The sequence to display.
+
+        Returns:
+            None
+
+        Example:
+            # Assuming 'instance' is an object of the class containing this method
+            instance.show_table_sequence("ATCG...")
+        """
+        # Show sequence based on selected header in table
         selected_item = self.tree.focus()
         if not selected_item:
             return
@@ -789,6 +1055,26 @@ class UpdatedFASTAViewer(ModifiedFASTAViewer):
 
 # Function to create a MySQL database connection
 def create_connection(host, user, password, database):
+    """
+    Create a MySQL database connection.
+
+    Attempts to establish a connection to a MySQL database using the provided credentials
+    for the specified host, user, password, and database.
+
+    Args:
+        host (str): The host address of the MySQL server.
+        user (str): The MySQL user name.
+        password (str): The password associated with the MySQL user.
+        database (str): The name of the MySQL database.
+
+    Returns:
+        mysql.connector.connection.MySQLConnection or None: A MySQL database connection if successful,
+        or None if an error occurs during the connection attempt.
+
+    Example:
+        # Assuming 'host', 'user', 'password', and 'database' are valid credentials
+        connection = create_connection(host='localhost', user='root', password='password', database='mydb')
+    """
     connection = None
     try:
         connection = mysql.connector.connect(
@@ -807,6 +1093,22 @@ def create_connection(host, user, password, database):
 
 # Function to create a new database
 def create_database(connection, db_name):
+    """
+    Create a new MySQL database.
+
+    Attempts to create a new MySQL database with the specified name using the provided database connection.
+
+    Args:
+        connection (mysql.connector.connection.MySQLConnection): The MySQL database connection.
+        db_name (str): The name of the new database to be created.
+
+    Returns:
+        None
+
+    Example:
+        # Assuming 'connection' is a valid MySQL database connection
+        create_database(connection, 'new_database')
+    """
     try:
         cursor = connection.cursor()
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
@@ -816,6 +1118,26 @@ def create_database(connection, db_name):
 
 # Function to execute DDL statements for table creation
 def create_tables(connection, ddl_statements):
+    """
+    Create tables in a MySQL database using Data Definition Language (DDL) statements.
+
+    Executes a series of Data Definition Language (DDL) statements to create tables in the specified MySQL database.
+
+    Args:
+        connection (mysql.connector.connection.MySQLConnection): The MySQL database connection.
+        ddl_statements (list): A list of DDL statements for creating tables.
+
+    Returns:
+        None
+
+    Example:
+        # Assuming 'connection' is a valid MySQL database connection
+        ddl_statements = [
+            "CREATE TABLE IF NOT EXISTS Table1 (column1 INT, column2 VARCHAR(255));",
+            "CREATE TABLE IF NOT EXISTS Table2 (column3 INT, column4 VARCHAR(255));"
+        ]
+        create_tables(connection, ddl_statements)
+    """
     try:
         cursor = connection.cursor()
         for statement in ddl_statements:
@@ -826,6 +1148,23 @@ def create_tables(connection, ddl_statements):
 
 # Function to process data, extract information, and create tab-delimited text files
 def process_data_and_create_txt_files(connection):
+    """
+    Process data and create tab-delimited text files for each table.
+
+    This function replaces the following data processing logic with your own.
+    It generates a list of tuples ('data_processing_result') containing data to be written to text files.
+    For each table, it creates a tab-delimited text file with the data.
+
+    Args:
+        connection (mysql.connector.connection.MySQLConnection): The MySQL database connection.
+
+    Returns:
+        None
+
+    Example:
+        # Assuming 'connection' is a valid MySQL database connection
+        process_data_and_create_txt_files(connection)
+    """
     # Replace the following with your own data processing logic
     data_processing_result = [
         ("John Doe", 25, "john.doe@example.com"),
