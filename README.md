@@ -48,7 +48,7 @@ In MySQL Workbench:
 
 ### 7. Configure Database Connection in SeqViewer.py
 
-- Change the global variables:
+- Change the global variables to your configuration:
    - ```host = "localhost"```
    - ```user = "root"```
    - ```password = "password"```
