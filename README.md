@@ -9,7 +9,7 @@ Before running the program, make sure you have the following prerequisites insta
 - Python (version 3.x)
 - Run the command ```pip install -r requirements.txt```
 
-Additionally, you need access to a MySQL database and have the necessary credentials (host, user, password, and database name) to establish a connection. In the case of this program, the developers created a separate database server specifically for the project.
+Additionally, you need access to a MySQL database and have the necessary credentials (host, user, password, and database name) to establish a connection. In the case of this program, the developers created a separate database server specifically for the project. You can modify the host, user, password, and database name in the ```SeqViewer.py``` file to your own database.
 
 ## Program Functionality
 
