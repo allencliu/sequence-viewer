@@ -51,8 +51,8 @@ In MySQL Workbench:
 - Change the global variables:
    - ```host = "localhost"```
    - ```user = "root"```
-   - ```password = password```
-   - ```database = database/schema```
+   - ```password = "password"```
+   - ```database = "database/schema"```
 
 ## Program Functionality
 
