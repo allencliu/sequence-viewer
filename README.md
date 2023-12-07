@@ -42,7 +42,7 @@ The program provides the following functionalities:
 
 1. Ensure that the prerequisites are installed.
 2. Update the database connection details (host, user, password, and database) at the beginning of the script.
-3. Execute the script in a Python environment.
+3. Execute the script in a Python environment (e.g ```python3 SeqViewer.py```)
 
 ## Notes
 
