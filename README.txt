@@ -77,7 +77,11 @@ The program provides the following functionalities:
    - Use the listbox to select a sequence header for detailed viewing.
    - Clear selections and displayed sequences using the "Clear" button.
 
-6. **Additional Features**
+6. **Create Database DDL File**
+   - Pressing the button creates a DDL file called "seq.txt", which contains SQL insert commands to all the sequences, sequence names, and sequence descriptions that the user was referencing into a database.
+   - Users can import the contents of this DDL file by either using the mysqlimport command on the command line interface or manually copying the contents of this file into the query section of a database server.
+
+7. **Additional Features**
    - **Detailed Sequence View:** For sequences exceeding 5000 characters, a detailed sequence view is provided in a new window.
    - **Table Sorting:** Click on column headers in the Treeview to sort the displayed sequences based on the selected column.
 
