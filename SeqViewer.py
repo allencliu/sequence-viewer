@@ -4,9 +4,9 @@ from collections import OrderedDict
 import os
 from tkinter.ttk import Treeview
 import regex
-import mysql
-import mysql.connector
-from mysql.connector import Error
+# import mysql
+# import mysql.connector
+# from mysql.connector import Error
 import tkinter.messagebox as messagebox
 
 
@@ -490,12 +490,12 @@ class ModifiedFASTAViewer:
         self.ddl_button.pack(side="left", padx=5)
 
         # Create a button to upload to the database
-        self.upload_to_database_button = Button(self.button_frame, text="Upload to Database", command=self.upload_to_database)
-        self.upload_to_database_button.pack(side="left", padx=5)
+        # self.upload_to_database_button = Button(self.button_frame, text="Upload to Database", command=self.upload_to_database)
+        # self.upload_to_database_button.pack(side="left", padx=5)
 
         # Create a button to download from the database
-        self.download_from_database_button = Button(self.button_frame, text="Download from Database", command=self.download_from_database)
-        self.download_from_database_button.pack(side="left", padx=5)
+        # self.download_from_database_button = Button(self.button_frame, text="Download from Database", command=self.download_from_database)
+        # self.download_from_database_button.pack(side="left", padx=5)
         
         # List containing checkboxes
         self.cbvars = {}
@@ -1217,23 +1217,23 @@ if __name__ == "__main__":
     ]
 
     # Create a connection to MySQL server
-    connection = create_connection(host, user, password, database)
+    # connection = create_connection(host, user, password, database)
+    # #
+    # if connection:
+    #     # Create the database
+    #     create_database(connection, database)
     #
-    if connection:
-        # Create the database
-        create_database(connection, database)
-
-        # Switch to the created database
-        connection.database = database
-
-        # Create tables using DDL statements
-        create_tables(connection, ddl_statements)
-
-        # Process data, extract information, and create tab-delimited text files
-        #process_data_and_create_txt_files(connection)
-
-        # Close the database connection
-        connection.close()
+    #     # Switch to the created database
+    #     connection.database = database
+    #
+    #     # Create tables using DDL statements
+    #     create_tables(connection, ddl_statements)
+    #
+    #     # Process data, extract information, and create tab-delimited text files
+    #     #process_data_and_create_txt_files(connection)
+    #
+    #     # Close the database connection
+    #     connection.close()
 
 
 # Import text file of sequence input into the table
