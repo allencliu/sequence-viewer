@@ -4,9 +4,9 @@ from collections import OrderedDict
 import os
 from tkinter.ttk import Treeview
 import regex
-import mysql
-import mysql.connector
-from mysql.connector import Error
+# import mysql
+# import mysql.connector
+# from mysql.connector import Error
 import tkinter.messagebox as messagebox
 
 
@@ -320,137 +320,137 @@ def codon_profile_print(codon_dict):
 
 class ModifiedFASTAViewer:
 
-    def upload_to_database(self):
-        """
-        Upload sequence data to a database.
+    # def upload_to_database(self):
+    #     """
+    #     Upload sequence data to a database.
 
-        Establishes a connection to the database using the provided credentials,
-        retrieves sequence data from the internal data structure (self.sequences),
-        and inserts the data into the SEQUENCE table.
+    #     Establishes a connection to the database using the provided credentials,
+    #     retrieves sequence data from the internal data structure (self.sequences),
+    #     and inserts the data into the SEQUENCE table.
 
-        Raises:
-            Any exceptions that occur during the database operations.
+    #     Raises:
+    #         Any exceptions that occur during the database operations.
 
-        Returns:
-            None
+    #     Returns:
+    #         None
 
-        Note:
-            - This method assumes a certain database schema with a SEQUENCE table.
-            - The connection details (host, user, password, database) should be set
-              before calling this method.
-            - The sequence data is retrieved from the internal 'sequences' dictionary
-              and uploaded to the database.
+    #     Note:
+    #         - This method assumes a certain database schema with a SEQUENCE table.
+    #         - The connection details (host, user, password, database) should be set
+    #           before calling this method.
+    #         - The sequence data is retrieved from the internal 'sequences' dictionary
+    #           and uploaded to the database.
 
-        Example:
-            instance = YourClass()
-            instance.upload_to_database()
-        """
-        connection = create_connection(host, user, password, database)
-        # Get data to insert into the database
-        # name, description, sequence, length = self.get_header_sequence()
+    #     Example:
+    #         instance = YourClass()
+    #         instance.upload_to_database()
+    #     """
+    #     connection = create_connection(host, user, password, database)
+    #     # Get data to insert into the database
+    #     # name, description, sequence, length = self.get_header_sequence()
 
-        # Establish a database connection
-        try:
-            with connection.cursor() as cursor:
-                # SQL query to insert data into the SEQUENCE table
-                sql = "INSERT INTO SEQUENCE (SEQUENCE_NAME, SEQUENCE_DESCRIPTION, SEQUENCE) VALUES (%s, %s, %s)"
+    #     # Establish a database connection
+    #     try:
+    #         with connection.cursor() as cursor:
+    #             # SQL query to insert data into the SEQUENCE table
+    #             sql = "INSERT INTO SEQUENCE (SEQUENCE_NAME, SEQUENCE_DESCRIPTION, SEQUENCE) VALUES (%s, %s, %s)"
                 
-                # Execute the query
-                for kvp in self.sequences.items():
+    #             # Execute the query
+    #             for kvp in self.sequences.items():
                 
-                    headers = kvp[0].split(">")
+    #                 headers = kvp[0].split(">")
                 
-                    name = headers[1].split(" ")[0]
+    #                 name = headers[1].split(" ")[0]
                 
-                    description = " ".join(headers[1].split(" ")[1:])
+    #                 description = " ".join(headers[1].split(" ")[1:])
                     
-                    sequence = kvp[1]
-                    print(name, description, kvp[1])
-                    cursor.execute(sql, (name, description, sequence))
+    #                 sequence = kvp[1]
+    #                 print(name, description, kvp[1])
+    #                 cursor.execute(sql, (name, description, sequence))
 
-            # Commit changes to the database
-            connection.commit()
+    #         # Commit changes to the database
+    #         connection.commit()
 
-            # Show a success message box in the GUI
-            success_message = "Data uploaded successfully!"
-            messagebox.showinfo("Success", success_message)
+    #         # Show a success message box in the GUI
+    #         success_message = "Data uploaded successfully!"
+    #         messagebox.showinfo("Success", success_message)
             
-        except Exception as e:
-            print(f"Error: {e}")
+    #     except Exception as e:
+    #         print(f"Error: {e}")
 
-        finally:
-            # Close the database connection
-            connection.close()
+    #     finally:
+    #         # Close the database connection
+    #         connection.close()
 
-    def download_from_database(self):
-        """
-        Download sequence data from the database and populate a Treeview.
+    # def download_from_database(self):
+    #     """
+    #     Download sequence data from the database and populate a Treeview.
 
-        Clears the previous items in the associated Treeview, establishes a connection
-        to the database using the provided credentials, retrieves data from the SEQUENCE
-        table, and populates the Treeview with sequence information.
+    #     Clears the previous items in the associated Treeview, establishes a connection
+    #     to the database using the provided credentials, retrieves data from the SEQUENCE
+    #     table, and populates the Treeview with sequence information.
 
-        Raises:
-            Any exceptions that occur during the database operations.
+    #     Raises:
+    #         Any exceptions that occur during the database operations.
 
-        Returns:
-            None
+    #     Returns:
+    #         None
 
-        Note:
-            - This method assumes a certain database schema with a SEQUENCE table.
-            - The connection details (host, user, password, database) should be set
-              before calling this method.
-            - The sequence data is fetched from the database and displayed in the Treeview.
-            - The internal 'sequences' dictionary is updated with the downloaded data.
+    #     Note:
+    #         - This method assumes a certain database schema with a SEQUENCE table.
+    #         - The connection details (host, user, password, database) should be set
+    #           before calling this method.
+    #         - The sequence data is fetched from the database and displayed in the Treeview.
+    #         - The internal 'sequences' dictionary is updated with the downloaded data.
 
-        Example:
-            instance = YourClass()
-            instance.download_from_database()
-        """
-        # Clear previous items in the Treeview
-        for item in self.tree.get_children():
-            self.tree.delete(item)
+    #     Example:
+    #         instance = YourClass()
+    #         instance.download_from_database()
+    #     """
+    #     # Clear previous items in the Treeview
+    #     for item in self.tree.get_children():
+    #         self.tree.delete(item)
 
-        # Establish a database connection
-        connection = create_connection(host, user, password, database)
+    #     # Establish a database connection
+    #     connection = create_connection(host, user, password, database)
         
-        try:
-            with connection.cursor() as cursor:
-                # SQL query to retrieve data from the SEQUENCE table
-                sql = "SELECT SEQUENCE_NAME, SEQUENCE_DESCRIPTION, SEQUENCE FROM SEQUENCE"
+    #     try:
+    #         with connection.cursor() as cursor:
+    #             # SQL query to retrieve data from the SEQUENCE table
+    #             sql = "SELECT SEQUENCE_NAME, SEQUENCE_DESCRIPTION, SEQUENCE FROM SEQUENCE"
                 
-                # Execute the query
-                cursor.execute(sql)
+    #             # Execute the query
+    #             cursor.execute(sql)
                 
-                # Fetch all the results
-                results = cursor.fetchall()
+    #             # Fetch all the results
+    #             results = cursor.fetchall()
 
-                # Populate the Treeview with sequence information
-                for row in results:
-                    name = row[0]
-                    description = row[1]
-                    sequence = row[2]
-                    length = len(sequence)
-                    a_count = sequence.count('A')
-                    t_count = sequence.count('T')
-                    g_count = sequence.count('G')
-                    c_count = sequence.count('C')
-                    gc_content = (g_count + c_count) / length * 100 if length > 0 else 0
+    #             # Populate the Treeview with sequence information
+    #             for row in results:
+    #                 name = row[0]
+    #                 description = row[1]
+    #                 sequence = row[2]
+    #                 length = len(sequence)
+    #                 a_count = sequence.count('A')
+    #                 t_count = sequence.count('T')
+    #                 g_count = sequence.count('G')
+    #                 c_count = sequence.count('C')
+    #                 gc_content = (g_count + c_count) / length * 100 if length > 0 else 0
 
-                    self.tree.insert("", "end", values=(name, description, length, a_count, t_count, g_count, c_count, f"{gc_content:.2f}%"))
+    #                 self.tree.insert("", "end", values=(name, description, length, a_count, t_count, g_count, c_count, f"{gc_content:.2f}%"))
                     
-                    # Update the sequences dictionary
-                    header = f">{name} {description}"
-                    self.sequences[header] = sequence
+    #                 # Update the sequences dictionary
+    #                 header = f">{name} {description}"
+    #                 self.sequences[header] = sequence
 
-        except Exception as e:
-            print(f"Error: {e}")
+    #     except Exception as e:
+    #         print(f"Error: {e}")
 
-        finally:
-            # Close the database connection
-            connection.close()
+    #     finally:
+    #         # Close the database connection
+    #         connection.close()
 
-        return
+    #     return
         
     def __init__(self, master):
         """
@@ -490,12 +490,12 @@ class ModifiedFASTAViewer:
         self.ddl_button.pack(side="left", padx=5)
 
         # Create a button to upload to the database
-        self.upload_to_database_button = Button(self.button_frame, text="Upload to Database", command=self.upload_to_database)
-        self.upload_to_database_button.pack(side="left", padx=5)
+        # self.upload_to_database_button = Button(self.button_frame, text="Upload to Database", command=self.upload_to_database)
+        # self.upload_to_database_button.pack(side="left", padx=5)
 
         # Create a button to download from the database
-        self.download_from_database_button = Button(self.button_frame, text="Download from Database", command=self.download_from_database)
-        self.download_from_database_button.pack(side="left", padx=5)
+        # self.download_from_database_button = Button(self.button_frame, text="Download from Database", command=self.download_from_database)
+        # self.download_from_database_button.pack(side="left", padx=5)
         
         # List containing checkboxes
         self.cbvars = {}
@@ -1066,174 +1066,142 @@ class UpdatedFASTAViewer(ModifiedFASTAViewer):
             self.sequence_table_display.insert(tk.END, sequence)
             # print(self.sequence_table_display.get("1.0", "end-1c"))
 
-# Function to create a MySQL database connection
-def create_connection(host, user, password, database):
-    """
-    Create a MySQL database connection.
+# # Function to create a MySQL database connection
+# def create_connection(host, user, password, database):
+#     """
+#     Create a MySQL database connection.
 
-    Attempts to establish a connection to a MySQL database using the provided credentials
-    for the specified host, user, password, and database.
+#     Attempts to establish a connection to a MySQL database using the provided credentials
+#     for the specified host, user, password, and database.
 
-    Args:
-        host (str): The host address of the MySQL server.
-        user (str): The MySQL user name.
-        password (str): The password associated with the MySQL user.
-        database (str): The name of the MySQL database.
+#     Args:
+#         host (str): The host address of the MySQL server.
+#         user (str): The MySQL user name.
+#         password (str): The password associated with the MySQL user.
+#         database (str): The name of the MySQL database.
 
-    Returns:
-        mysql.connector.connection.MySQLConnection or None: A MySQL database connection if successful,
-        or None if an error occurs during the connection attempt.
+#     Returns:
+#         mysql.connector.connection.MySQLConnection or None: A MySQL database connection if successful,
+#         or None if an error occurs during the connection attempt.
 
-    Example:
-        # Assuming 'host', 'user', 'password', and 'database' are valid credentials
-        connection = create_connection(host='localhost', user='root', password='password', database='mydb')
-    """
-    connection = None
-    try:
-        connection = mysql.connector.connect(
-            host=host,
-            user=user,
-            password=password,
-            database=database
-        )
+#     Example:
+#         # Assuming 'host', 'user', 'password', and 'database' are valid credentials
+#         connection = create_connection(host='localhost', user='root', password='password', database='mydb')
+#     """
+#     connection = None
+#     try:
+#         connection = mysql.connector.connect(
+#             host=host,
+#             user=user,
+#             password=password,
+#             database=database
+#         )
 
-        if connection.is_connected():
-            print("Connected to MySQL Server")
-            return connection
+#         if connection.is_connected():
+#             print("Connected to MySQL Server")
+#             return connection
 
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
+#     except mysql.connector.Error as err:
+#         print(f"Error: {err}")
 
-# Function to create a new database
-def create_database(connection, db_name):
-    """
-    Create a new MySQL database.
+# # Function to create a new database
+# def create_database(connection, db_name):
+#     """
+#     Create a new MySQL database.
 
-    Attempts to create a new MySQL database with the specified name using the provided database connection.
+#     Attempts to create a new MySQL database with the specified name using the provided database connection.
 
-    Args:
-        connection (mysql.connector.connection.MySQLConnection): The MySQL database connection.
-        db_name (str): The name of the new database to be created.
+#     Args:
+#         connection (mysql.connector.connection.MySQLConnection): The MySQL database connection.
+#         db_name (str): The name of the new database to be created.
 
-    Returns:
-        None
+#     Returns:
+#         None
 
-    Example:
-        # Assuming 'connection' is a valid MySQL database connection
-        create_database(connection, 'new_database')
-    """
-    try:
-        cursor = connection.cursor()
-        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
-        print(f"Database '{db_name}' created successfully")
-    except Error as e:
-        print(f"Error: {e}")
+#     Example:
+#         # Assuming 'connection' is a valid MySQL database connection
+#         create_database(connection, 'new_database')
+#     """
+#     try:
+#         cursor = connection.cursor()
+#         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
+#         print(f"Database '{db_name}' created successfully")
+#     except Error as e:
+#         print(f"Error: {e}")
 
-# Function to execute DDL statements for table creation
-def create_tables(connection, ddl_statements):
-    """
-    Create tables in a MySQL database using Data Definition Language (DDL) statements.
+# # Function to execute DDL statements for table creation
+# def create_tables(connection, ddl_statements):
+#     """
+#     Create tables in a MySQL database using Data Definition Language (DDL) statements.
 
-    Executes a series of Data Definition Language (DDL) statements to create tables in the specified MySQL database.
+#     Executes a series of Data Definition Language (DDL) statements to create tables in the specified MySQL database.
 
-    Args:
-        connection (mysql.connector.connection.MySQLConnection): The MySQL database connection.
-        ddl_statements (list): A list of DDL statements for creating tables.
+#     Args:
+#         connection (mysql.connector.connection.MySQLConnection): The MySQL database connection.
+#         ddl_statements (list): A list of DDL statements for creating tables.
 
-    Returns:
-        None
+#     Returns:
+#         None
 
-    Example:
-        # Assuming 'connection' is a valid MySQL database connection
-        ddl_statements = [
-            "CREATE TABLE IF NOT EXISTS Table1 (column1 INT, column2 VARCHAR(255));",
-            "CREATE TABLE IF NOT EXISTS Table2 (column3 INT, column4 VARCHAR(255));"
-        ]
-        create_tables(connection, ddl_statements)
-    """
-    try:
-        cursor = connection.cursor()
-        for statement in ddl_statements:
-            cursor.execute(statement)
-        print("Tables created successfully")
-    except Error as e:
-        print(f"Error: {e}")
+#     Example:
+#         # Assuming 'connection' is a valid MySQL database connection
+#         ddl_statements = [
+#             "CREATE TABLE IF NOT EXISTS Table1 (column1 INT, column2 VARCHAR(255));",
+#             "CREATE TABLE IF NOT EXISTS Table2 (column3 INT, column4 VARCHAR(255));"
+#         ]
+#         create_tables(connection, ddl_statements)
+#     """
+#     try:
+#         cursor = connection.cursor()
+#         for statement in ddl_statements:
+#             cursor.execute(statement)
+#         print("Tables created successfully")
+#     except Error as e:
+#         print(f"Error: {e}")
 
-# Function to process data, extract information, and create tab-delimited text files
-def process_data_and_create_txt_files(connection):
-    """
-    Process data and create tab-delimited text files for each table.
-
-    This function replaces the following data processing logic with your own.
-    It generates a list of tuples ('data_processing_result') containing data to be written to text files.
-    For each table, it creates a tab-delimited text file with the data.
-
-    Args:
-        connection (mysql.connector.connection.MySQLConnection): The MySQL database connection.
-
-    Returns:
-        None
-
-    Example:
-        # Assuming 'connection' is a valid MySQL database connection
-        process_data_and_create_txt_files(connection)
-    """
-    # Replace the following with your own data processing logic
-    data_processing_result = [
-        ("John Doe", 25, "john.doe@example.com"),
-        ("Jane Smith", 30, "jane.smith@example.com")
-    ]
-
-    # Create a tab-delimited txt file for each table
-    for table_data in data_processing_result:
-        table_name = "SEQUENCE"
-        file_name = f"{table_name}.txt"
-        with open(file_name, "w") as file:
-            file.write("\t".join(map(str, table_data)))
-        print(f"File '{file_name}' created successfully")
 
 # Use this command to connect to db on ubuntu for remote access:
 # mysql -u zigmonsg -p -h bio466-f15.csi.miamioh.edu
 
 
 # Main script
-if __name__ == "__main__":
-    # Replace with your own database and user credentials
-    # Remote hostname/IP address
-    #host_name = "bio466-f15.csi.miamioh.edu"
+# if __name__ == "__main__":
+#     # Replace with your own database and user credentials
+#     # Remote hostname/IP address
+#     #host_name = "bio466-f15.csi.miamioh.edu"
 
 
-    # DDL statements for table creation
-    ddl_statements = [
-        """
-        CREATE TABLE IF NOT EXISTS SEQUENCE (
-            SEQUENCE_ID INT AUTO_INCREMENT PRIMARY KEY,
-            SEQUENCE_NAME VARCHAR(255),
-            SEQUENCE_DESCRIPTION VARCHAR(255),
-            SEQUENCE TEXT
-        )
-        """
-        # Add more DDL statements for additional tables if needed
-    ]
+#     # DDL statements for table creation
+#     ddl_statements = [
+#         """
+#         CREATE TABLE IF NOT EXISTS SEQUENCE (
+#             SEQUENCE_ID INT AUTO_INCREMENT PRIMARY KEY,
+#             SEQUENCE_NAME VARCHAR(255),
+#             SEQUENCE_DESCRIPTION VARCHAR(255),
+#             SEQUENCE TEXT
+#         )
+#         """
+#         # Add more DDL statements for additional tables if needed
+#     ]
 
-    # Create a connection to MySQL server
-    connection = create_connection(host, user, password, database)
-    #
-    if connection:
-        # Create the database
-        create_database(connection, database)
+#     # Create a connection to MySQL server
+#     connection = create_connection(host, user, password, database)
+#     #
+#     if connection:
+#         # Create the database
+#         create_database(connection, database)
 
-        # Switch to the created database
-        connection.database = database
+#         # Switch to the created database
+#         connection.database = database
 
-        # Create tables using DDL statements
-        create_tables(connection, ddl_statements)
+#         # Create tables using DDL statements
+#         create_tables(connection, ddl_statements)
 
-        # Process data, extract information, and create tab-delimited text files
-        #process_data_and_create_txt_files(connection)
+#         # Process data, extract information, and create tab-delimited text files
+#         #process_data_and_create_txt_files(connection)
 
-        # Close the database connection
-        connection.close()
+#         # Close the database connection
+#         connection.close()
 
 
 # Import text file of sequence input into the table
