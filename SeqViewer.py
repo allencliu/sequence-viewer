@@ -709,10 +709,13 @@ class ModifiedFASTAViewer:
         # Get the num. of pressed buttons to find the num. of columns needed
         # in the output table.
         # Clear the DDL file each time the button is pressed
-        with open("seq.txt", "w") as output:
-            output.write("")
+        # with open("seq.txt", "w") as output:
+        #     output.write("")
+        with open("seq.txt", "w") as file:
+            file.write("INSERT INTO sequences (seq_name, sequence, seq_description) VALUES ")
 
-        for selected_item in self.tree.get_children():
+        #for selected_item in self.tree.get_children():
+        for inx, selected_item in enumerate(self.tree.get_children()):
             print(selected_item)
 
             header = ">" + self.tree.item(selected_item, "values")[0] + " " + self.tree.item(selected_item, "values")[1]
@@ -727,15 +730,31 @@ class ModifiedFASTAViewer:
                 (name, sequence, description)
                 #(14, name, sequence, description)
             ]
-            # Create a tab-delimited txt file for each table
+
             for table_data in data_processing_result:
-                #table_name = "SEQUENCE"
+                table_name = "SEQUENCE"
                 file_name = "seq.txt"
-                #file_name = f"{table_name}.txt"
-                #with open(file_name, "a") as file:
                 with open(file_name, "a") as file:
-                    file.write("\t".join(map(str, table_data))+"\n")
-                print(f"File '{file_name}' created successfully")
+                    file.write("\t".join(map(str, table_data)) + "\n")
+                    # file.write("\t".join(map(str, table_data))+"\n")
+                    if (inx < len(self.tree.get_children()) - 1):
+                        row_str = "(\'" + name + "\',\'" + sequence + "\',\'" + description + "\'),\n"
+                        file.write(row_str)
+                        # file.write("(", name, sequence, description, "),\n")
+                    else:
+                        row_str = "(\'" + name + "\',\'" + sequence + "\',\'" + description + "\');"
+                        file.write(row_str)
+                        # file.write("(",name, sequence, description, ");")
+
+            # Create a tab-delimited txt file for each table
+            # for table_data in data_processing_result:
+            #     #table_name = "SEQUENCE"
+            #     file_name = "seq.txt"
+            #     #file_name = f"{table_name}.txt"
+            #     #with open(file_name, "a") as file:
+            #     with open(file_name, "a") as file:
+            #         file.write("\t".join(map(str, table_data))+"\n")
+            #     print(f"File '{file_name}' created successfully")
             
     def button_pressed(self):
         """
