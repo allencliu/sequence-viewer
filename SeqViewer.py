@@ -735,7 +735,7 @@ class ModifiedFASTAViewer:
                 table_name = "SEQUENCE"
                 file_name = "seq.txt"
                 with open(file_name, "a") as file:
-                    file.write("\t".join(map(str, table_data)) + "\n")
+                    # file.write("\t".join(map(str, table_data)) + "\n")
                     # file.write("\t".join(map(str, table_data))+"\n")
                     if (inx < len(self.tree.get_children()) - 1):
                         row_str = "(\'" + name + "\',\'" + sequence + "\',\'" + description + "\'),\n"
